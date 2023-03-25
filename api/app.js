@@ -1,11 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const mongoose = require('mongoose');
-
-// const errorMiddleware = require('./middleware/apiError.middlware');
-
 require('dotenv').config({ path: './.env' });
+const { InitDB } = require('./models');
+
+const authRouter = require('./routes/auth.routes');
+const companyRouter = require('./routes/company.routes');
+const userRouter = require('./routes/user.routes');
+const eventRouter = require('./routes/event.routes');
+
+const errorMiddleware = require('./middlewares/apiError.middleware');
 
 const app = express();
 
@@ -18,7 +22,12 @@ app.use(express.static('static'));
 app.use(cookieParser());
 app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
 
-// app.use(errorMiddleware);
+app.use('/api/auth', authRouter);
+// app.use('/api/calendar', calendarRouter);
+app.use('/api/users', userRouter);
+// app.use('/api/event', eventRouter);
+
+app.use(errorMiddleware);
 
 app.get('/', (req, res) => {
   res.send('OK');
@@ -26,7 +35,7 @@ app.get('/', (req, res) => {
 
 const start = async () => {
   try {
-    await mongoose.connect(process.env.DB_URI);
+    await InitDB();
     app.listen(PORT, () => {
       console.log(`server is running on http://${HOST}:${PORT}`);
     });
