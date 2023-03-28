@@ -37,10 +37,13 @@ module.exports.eventSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    category: {
-      type: String,
-      required: true,
-    },
+    categories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true,
+      },
+    ],
     organizer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Company',
@@ -59,5 +62,5 @@ module.exports.eventSchema = new mongoose.Schema(
   },
   {
     versionKey: false,
-  },
+  }
 );

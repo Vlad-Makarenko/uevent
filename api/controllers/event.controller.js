@@ -9,23 +9,35 @@ const createEvent = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return next(ApiError.BadRequestError('validation error', errors.array()));
+      return next(
+        ApiError.InvalidDataError('validation error', errors.array())
+      );
     }
-    const { calendarId } = req.params;
     const {
-      name, type, description, color, startEvent, endEvent, allDay,
-    } = req.body;
-    const event = await eventService.createEvent(calendarId, {
-      author: req.user.id,
-      parentCalendar: calendarId,
-      name,
-      type,
+      title,
       description,
-      color,
+      banner,
+      location,
       startEvent,
       endEvent,
       allDay,
-      inviteLink: `${process.env.CLIENT_URL}/acceptInvite/event/${uuid.v4()}`,
+      price,
+      category,
+      organizer,
+      maxAttendees,
+    } = req.body;
+    const event = await eventService.createEvent(organizer, {
+      title,
+      description,
+      banner,
+      location,
+      startEvent,
+      endEvent,
+      allDay,
+      price,
+      category,
+      organizer,
+      maxAttendees,
     });
 
     return res.status(201).json(event);
@@ -60,7 +72,7 @@ const updateEvent = async (req, res, next) => {
       startEvent,
       endEvent,
       isPerformed,
-      allDay,
+      allDay
     );
 
     return res.status(201).json(event);
@@ -73,7 +85,19 @@ const getAllEvents = async (req, res, next) => {
   try {
     const result = await eventService.getAllEvents(
       req.params.calendarId,
-      req.user.id,
+      req.user.id
+    );
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getAllCompanyEvents = async (req, res, next) => {
+  try {
+    const result = await eventService.getAllEvents(
+      req.params.calendarId,
+      req.user.id
     );
     res.status(200).json(result);
   } catch (err) {
@@ -115,13 +139,13 @@ const sendInvite = async (req, res, next) => {
       process.env.JWT_ACCESS_SECRET,
       {
         expiresIn: '7d',
-      },
+      }
     );
     await mailService.sendInviteEvent(
       req.body.participant.email,
       token,
       req.user.fullName,
-      req.params.id,
+      req.params.id
     );
     res.status(200).json({ message: 'Invite sent successfully' });
   } catch (err) {
@@ -144,9 +168,8 @@ module.exports = {
   createEvent,
   updateEvent,
   getAllEvents,
+  getAllCompanyEvents,
   getTodayEvents,
   getEvent,
   deleteEvent,
-  sendInvite,
-  acceptInvite,
 };

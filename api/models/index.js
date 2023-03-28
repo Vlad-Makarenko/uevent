@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { calendarSchema } = require('./Company');
+const { categorySchema } = require('./Category');
 const { eventSchema } = require('./Event');
 const { tokenSchema } = require('./Token');
 const { userSchema } = require('./User');
@@ -9,7 +10,8 @@ const InitDB = async () => {
 };
 
 // module.exports.Calendar = mongoose.model('Calendar', calendarSchema, 'calendar');
-// module.exports.Event = mongoose.model('Event', eventSchema, 'event');
+module.exports.Category = mongoose.model('Category', categorySchema, 'category');
+module.exports.Event = mongoose.model('Event', eventSchema, 'event');
 module.exports.Token = mongoose.model('Token', tokenSchema, 'token');
 module.exports.User = mongoose.model('User', userSchema, 'user');
 module.exports.InitDB = InitDB;

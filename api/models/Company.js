@@ -9,7 +9,8 @@ module.exports.companySchema = new mongoose.Schema(
     description: String,
     founded: {
       type: Date,
-      required: true,
+      immutable: true,
+      default: () => Date.now(),
     },
     location: {
       type: String,
@@ -23,12 +24,10 @@ module.exports.companySchema = new mongoose.Schema(
         ref: 'Event',
       },
     ],
-    employees: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-    ],
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
   },
   {
     versionKey: false,

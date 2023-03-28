@@ -13,6 +13,10 @@ module.exports = class ApiError extends Error {
     return new ApiError(400, message, errors);
   }
 
+  static InvalidDataError(message, errors = []) {
+    return new ApiError(422, message, errors);
+  }
+
   static ForbiddenError(message = 'You can\'t do this', errors = []) {
     return new ApiError(403, message, errors);
   }
