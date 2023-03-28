@@ -87,7 +87,7 @@ const getTodayEvents = async (userId) => {
     },
   })
     .where('attendees')
-    .(userId)
+    .equals(userId)
     .populate({ path: 'categories', select: 'id name' });
   if (!events) {
     throw ApiError.NothingFoundError('no events found');

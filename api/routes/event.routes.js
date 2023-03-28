@@ -13,7 +13,7 @@ router.post(
   '/',
   authMiddleware,
   body('name').trim().isLength({ min: 3, max: 30 }),
-  body('price').().isLength({ min: 3, max: 30 }),
+  body('price').isInt().isLength({ min: 0 }),
   body('name').trim().isLength({ min: 3, max: 30 }),
   eventController.createEvent
 );
