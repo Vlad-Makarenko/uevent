@@ -5,23 +5,21 @@ const authMiddleware = require('../middlewares/auth.middleware');
 
 const router = new Router();
 
-router.get('/', authMiddleware, companyController.getAllCompanies);
-router.get('/:id', authMiddleware, companyController.getCompany);
-router.get('/acceptInvite/:key', authMiddleware, companyController.acceptInvite);
+router.get('/', companyController.getAllCompanies);
+router.get('/:id', companyController.getCompanyById);
+// router.get('/acceptInvite/:key', authMiddleware, companyController.acceptInvite);
 router.post(
   '/',
   authMiddleware,
   body('name').trim().isLength({ min: 3, max: 50 }),
   companyController.createCompany,
 );
-router.post('/invite/:id', authMiddleware, companyController.sendInvite);
 router.patch(
   '/:id',
   authMiddleware,
   body('name').trim().isLength({ min: 3, max: 50 }),
-  companyController.updateCompany,
+  companyController.updateCompanyById,
 );
-router.delete('/:id', authMiddleware, companyController.deleteCompany);
-router.delete('/participant/:id', authMiddleware, companyController.deleteParticipant);
+router.delete('/:id', authMiddleware, companyController.deleteCompanyById);
 
 module.exports = router;

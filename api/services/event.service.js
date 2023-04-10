@@ -1,14 +1,16 @@
 const mongoose = require('mongoose');
-const { Calendar, Event, User } = require('../models');
+const {
+  Event, User, Category, Company
+} = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const createEvent = async (companyId, event) => {
-  const company = await Calendar.findById(companyId);
+  const company = await Company.findById(companyId);
   if (!company) {
     throw ApiError.BadRequestError('no such calendar found');
   }
   const createdEvent = await Event.create(event).then(async (docEvent) => {
-    await Calendar.findByIdAndUpdate(
+    await Company.findByIdAndUpdate(
       companyId,
       { $push: { events: docEvent.id } },
       { new: true, useFindAndModify: false }
@@ -21,33 +23,16 @@ const createEvent = async (companyId, event) => {
 const updateEvent = async (
   authorId,
   eventId,
-  name,
-  type,
-  description,
-  color,
-  startEvent,
-  endEvent,
-  isPerformed,
-  allDay = false
+  eventData
 ) => {
   const event = await Event.findById(eventId);
   if (!event) {
     throw ApiError.BadRequestError('no such event found');
   }
-  if (event.type === 'holiday') {
-    throw ApiError.BadRequestError('holiday events cannot be changed');
-  }
   if (event.author.toString() !== authorId) {
     throw ApiError.ForbiddenError();
   }
-  event.name = name || event.name;
-  event.description = description || event.description;
-  event.type = type || event.type;
-  event.color = color || event.color;
-  event.startEvent = startEvent || event.startEvent;
-  event.endEvent = endEvent || event.endEvent;
-  event.isPerformed = isPerformed;
-  event.allDay = allDay;
+  Object.assign(event, eventData);
   await event.save();
   return event;
 };
@@ -66,6 +51,11 @@ const getAllEvents = async () => {
     select: 'id name',
   });
   return events;
+};
+
+const getCategories = async () => {
+  const categories = await Category.find({});
+  return categories;
 };
 
 const getTodayEvents = async (userId) => {
@@ -95,15 +85,19 @@ const getTodayEvents = async (userId) => {
   return events;
 };
 
-const getEventById = async (id, userId) => {
+const getEventById = async (id) => {
   const event = await Event.findById(id)
     .populate({
-      path: 'sharedParticipants',
-      select: 'login fullName avatar id',
+      path: 'categories',
+      select: 'id name description',
     })
     .populate({
-      path: 'author',
-      select: 'login fullName avatar id',
+      path: 'attendees',
+      select: 'id fullName avatar',
+    })
+    .populate({
+      path: 'organizer',
+      select: 'id name logoUrl',
     });
   if (!event) {
     return null;
@@ -111,36 +105,50 @@ const getEventById = async (id, userId) => {
   return event;
 };
 
-const addParticipant = async (userId, link) => {
-  const participant = await User.findById(userId);
-  if (!participant) {
-    throw ApiError.BadRequestError('User is not authorized');
-  }
-  const candidate = await Event.findOne().where('inviteLink').equals(link);
+const subscribeEvent = async (userId, eventId) => {
+  const candidate = await Event.findById(eventId);
   if (!candidate) {
-    throw ApiError.BadRequestError('Wrong link');
+    throw ApiError.BadRequestError('Wrong event`s id');
   }
-  if (candidate.sharedParticipants.includes(userId)) {
-    throw ApiError.BadRequestError('You have already accepted this invitation');
+  if (candidate.attendees.includes(userId)) {
+    throw ApiError.BadRequestError('You have already subscribed this event');
   }
-  if (candidate.author.toString() === userId) {
-    throw ApiError.BadRequestError('You are already an author');
+  if (candidate.attendees.length === candidate.maxAttendees) {
+    throw ApiError.BadRequestError('There are no available seats for this event');
   }
-  const calendar = await Calendar.findOne()
-    .where('author')
-    .equals(userId)
-    .where('type')
-    .equals('main');
   const event = await Event.findByIdAndUpdate(
-    candidate.id,
+    eventId,
     {
-      $push: { sharedParticipants: userId },
+      $push: { attendees: userId },
     },
     { new: true, useFindAndModify: false }
   );
-  await Calendar.findByIdAndUpdate(
-    calendar.id,
+  await User.findByIdAndUpdate(
+    userId,
     { $push: { events: event.id } },
+    { new: true, useFindAndModify: false }
+  );
+  return event;
+};
+
+const unsubscribeEvent = async (userId, eventId) => {
+  const candidate = await Event.findById(eventId);
+  if (!candidate) {
+    throw ApiError.BadRequestError('Wrong event`s id');
+  }
+  if (!candidate.attendees.includes(userId)) {
+    throw ApiError.BadRequestError('You do not subscribed this event');
+  }
+  const event = await Event.findByIdAndUpdate(
+    eventId,
+    {
+      $pull: { attendees: userId },
+    },
+    { new: true, useFindAndModify: false }
+  );
+  await User.findByIdAndUpdate(
+    userId,
+    { $pull: { events: event.id } },
     { new: true, useFindAndModify: false }
   );
   return event;
@@ -163,7 +171,9 @@ module.exports = {
   getAllEvents,
   getAllCompanyEvents,
   getTodayEvents,
+  getCategories,
   getEventById,
   deleteEvent,
-  addParticipant,
+  subscribeEvent,
+  unsubscribeEvent,
 };

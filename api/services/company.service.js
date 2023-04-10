@@ -1,45 +1,55 @@
 // const mongoose = require('mongoose');
 
 // const eventService = require('./event.service');
-// const ApiError = require('../utils/ApiError');
+const ApiError = require('../utils/ApiError');
 
-// const { Company, User, Event } = require('../models');
+const { Company, User, Event } = require('../models');
 
-// const createCompany = async (userId, company) => await Company.create(company)
-//   .then(async (docCompany) => {
-//     await User.findByIdAndUpdate(
-//       userId,
-//       { $push: { companys: docCompany.id } },
-//       { new: true, useFindAndModify: false },
-//     );
-//     return docCompany;
-//   });
+module.exports.createCompany = async (userId, company) => await Company
+  .create(company).then(async (docCompany) => {
+    await User.findByIdAndUpdate(
+      userId,
+      { $push: { companies: docCompany.id } },
+      { new: true, useFindAndModify: false }
+    );
+    return docCompany;
+  });
 
-// const addParticipant = async (userId, link) => {
-//   const participant = await User.findById(userId);
-//   if (!participant) {
-//     throw ApiError.BadRequestError('User is not authorized');
-//   }
-//   const candidate = await Company.findOne().where('inviteLink').equals(link);
-//   if (!candidate) {
-//     throw ApiError.BadRequestError('Wrong link');
-//   }
-//   if (candidate.participants.includes(userId)) {
-//     throw ApiError.BadRequestError('You have already accepted this invitation');
-//   }
-//   if (candidate.author.toString() === userId) {
-//     throw ApiError.BadRequestError('You are already an author');
-//   }
-//   const company = await Company.findByIdAndUpdate(
-//     candidate.id,
-//     {
-//       $push: { participants: userId }
-//       type: 'shared',
-//     },
-//     { new: true, useFindAndModify: false },
-//   );
-//   return company;
-// };
+// Read all companies
+module.exports.getAllCompanies = async () => {
+  const companies = await Company.find();
+  return companies;
+};
+
+// Read a single company by ID
+module.exports.getCompanyById = async (id) => {
+  const company = await Company.findById(id)
+    .populate({
+      path: 'owner',
+      select: 'id fullName avatar'
+    })
+    .populate({
+      path: 'events',
+      select: 'id title banner price description',
+    });
+  return company;
+};
+
+// Update a company by ID
+module.exports.updateCompanyById = async (id, companyData) => {
+  const company = await Company.findById(id);
+  if (!company) {
+    throw ApiError.NothingFoundError('Company not found');
+  }
+  Object.assign(company, companyData);
+  await company.save();
+  return company;
+};
+
+// Delete a company by ID
+module.exports.deleteCompanyById = async (id) => {
+  await Company.findByIdAndDelete(id);
+};
 
 // const getCompanyById = async (id, userId) => {
 //   const company = await Company.findById(id)

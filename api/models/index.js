@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const { calendarSchema } = require('./Company');
+const { companySchema } = require('./Company');
 const { categorySchema } = require('./Category');
 const { eventSchema } = require('./Event');
+const { commentSchema } = require('./Comment');
 const { tokenSchema } = require('./Token');
 const { userSchema } = require('./User');
 
@@ -9,9 +10,10 @@ const InitDB = async () => {
   await mongoose.connect(process.env.DB_URI).then(() => { console.log('DB connection === OK'); });
 };
 
-// module.exports.Calendar = mongoose.model('Calendar', calendarSchema, 'calendar');
+module.exports.Company = mongoose.model('Company', companySchema, 'company');
 module.exports.Category = mongoose.model('Category', categorySchema, 'category');
 module.exports.Event = mongoose.model('Event', eventSchema, 'event');
+module.exports.Comment = mongoose.model('Comment', commentSchema, 'comment');
 module.exports.Token = mongoose.model('Token', tokenSchema, 'token');
 module.exports.User = mongoose.model('User', userSchema, 'user');
 module.exports.InitDB = InitDB;

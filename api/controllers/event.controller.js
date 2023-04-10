@@ -13,32 +13,8 @@ const createEvent = async (req, res, next) => {
         ApiError.InvalidDataError('validation error', errors.array())
       );
     }
-    const {
-      title,
-      description,
-      banner,
-      location,
-      startEvent,
-      endEvent,
-      allDay,
-      price,
-      category,
-      organizer,
-      maxAttendees,
-    } = req.body;
-    const event = await eventService.createEvent(organizer, {
-      title,
-      description,
-      banner,
-      location,
-      startEvent,
-      endEvent,
-      allDay,
-      price,
-      category,
-      organizer,
-      maxAttendees,
-    });
+    const { organizer } = req.body;
+    const event = await eventService.createEvent(organizer, req.body);
 
     return res.status(201).json(event);
   } catch (err) {
@@ -52,27 +28,10 @@ const updateEvent = async (req, res, next) => {
     if (!errors.isEmpty()) {
       return next(ApiError.BadRequestError('validation error', errors.array()));
     }
-    const {
-      name,
-      type,
-      description,
-      color,
-      startEvent,
-      endEvent,
-      isPerformed,
-      allDay,
-    } = req.body;
     const event = await eventService.updateEvent(
       req.user.id,
       req.params.id,
-      name,
-      type,
-      description,
-      color,
-      startEvent,
-      endEvent,
-      isPerformed,
-      allDay
+      req.body
     );
 
     return res.status(201).json(event);
@@ -83,10 +42,7 @@ const updateEvent = async (req, res, next) => {
 
 const getAllEvents = async (req, res, next) => {
   try {
-    const result = await eventService.getAllEvents(
-      req.params.calendarId,
-      req.user.id
-    );
+    const result = await eventService.getAllEvents();
     res.status(200).json(result);
   } catch (err) {
     next(err);
@@ -95,10 +51,7 @@ const getAllEvents = async (req, res, next) => {
 
 const getAllCompanyEvents = async (req, res, next) => {
   try {
-    const result = await eventService.getAllEvents(
-      req.params.calendarId,
-      req.user.id
-    );
+    const result = await eventService.getAllCompanyEvents(req.params.companyId);
     res.status(200).json(result);
   } catch (err) {
     next(err);
@@ -113,9 +66,19 @@ const getTodayEvents = async (req, res, next) => {
     next(err);
   }
 };
+
+const getCategories = async (req, res, next) => {
+  try {
+    const result = await eventService.getCategories();
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getEvent = async (req, res, next) => {
   try {
-    const result = await eventService.getEventById(req.params.id, req.user.id);
+    const result = await eventService.getEventById(req.params.id);
     res.status(201).json(result);
   } catch (err) {
     next(err);
@@ -132,32 +95,20 @@ const deleteEvent = async (req, res, next) => {
   }
 };
 
-const sendInvite = async (req, res, next) => {
+const subscribeEvent = async (req, res, next) => {
   try {
-    const token = jwt.sign(
-      { from: req.user.id, event: req.params.id, to: req.body.participant },
-      process.env.JWT_ACCESS_SECRET,
-      {
-        expiresIn: '7d',
-      }
-    );
-    await mailService.sendInviteEvent(
-      req.body.participant.email,
-      token,
-      req.user.fullName,
-      req.params.id
-    );
-    res.status(200).json({ message: 'Invite sent successfully' });
+    const { id } = req.params;
+    const event = await eventService.subscribeEvent(req.user.id, id);
+    res.status(201).json(event);
   } catch (err) {
     next(err);
   }
 };
 
-const acceptInvite = async (req, res, next) => {
+const unsubscribeEvent = async (req, res, next) => {
   try {
-    const { key } = req.params;
-    const link = `${process.env.CLIENT_URL}/acceptInvite/event/${key}`;
-    const event = await eventService.addParticipant(req.user.id, link);
+    const { id } = req.params;
+    const event = await eventService.unsubscribeEvent(req.user.id, id);
     res.status(201).json(event);
   } catch (err) {
     next(err);
@@ -170,6 +121,9 @@ module.exports = {
   getAllEvents,
   getAllCompanyEvents,
   getTodayEvents,
+  getCategories,
   getEvent,
   deleteEvent,
+  subscribeEvent,
+  unsubscribeEvent,
 };

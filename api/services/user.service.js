@@ -16,7 +16,12 @@ const getUser = async (id) => {
     .select('id email avatar fullName createdAt')
     .populate({
       path: 'events',
-      select: 'name description banner',
+      select: 'title description banner',
+      match: { isPublic: true },
+    })
+    .populate({
+      path: 'companies',
+      select: 'name description logoUrl',
       match: { isPublic: true },
     });
   if (!user) {
