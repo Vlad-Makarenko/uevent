@@ -6,6 +6,7 @@ const { InitDB } = require('./models');
 
 const authRouter = require('./routes/auth.routes');
 const companyRouter = require('./routes/company.routes');
+const commentRouter = require('./routes/comment.routes');
 const userRouter = require('./routes/user.routes');
 const eventRouter = require('./routes/event.routes');
 
@@ -25,6 +26,7 @@ app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
 
 app.use('/api/auth', authRouter);
 app.use('/api/company', companyRouter);
+app.use('/api/comment', commentRouter);
 app.use('/api/users', userRouter);
 app.use('/api/event', eventRouter);
 

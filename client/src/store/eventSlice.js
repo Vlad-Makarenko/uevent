@@ -42,6 +42,18 @@ export const getAllEvents = createAsyncThunk(
   }
 );
 
+export const getMyEvents = createAsyncThunk(
+  'event/getMyEvents',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`${API_URL}/event/my`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const createEvent = createAsyncThunk(
   'event/createEvent',
   async (
@@ -128,22 +140,7 @@ const eventSlice = createSlice({
   initialState: {
     events: [],
     todayEvents: [],
-    event: {
-      name: '',
-      type: '',
-      color: '',
-      startEvent: '',
-      endEvent: '',
-      allDay: false,
-      isPerformed: false,
-      author: {
-        _id: 0,
-        login: '',
-        fullName: '',
-        avatar: '',
-      },
-      sharedParticipants: [],
-    },
+    event: {},
     eventLoading: false,
     isLoading: false,
     success: false,
@@ -167,6 +164,9 @@ const eventSlice = createSlice({
     [getAllEvents.pending]: (state) => {
       state.isLoading = true;
     },
+    [getMyEvents.pending]: (state) => {
+      state.isLoading = true;
+    },
     [createEvent.pending]: (state) => {
       state.isLoading = true;
       state.success = false;
@@ -183,6 +183,11 @@ const eventSlice = createSlice({
       state.eventLoading = false;
     },
     [getAllEvents.fulfilled]: (state, action) => {
+      state.events = action.payload;
+      state.isLoading = false;
+    },
+    [getMyEvents.fulfilled]: (state, action) => {
+      console.log(action.payload);
       state.events = action.payload;
       state.isLoading = false;
     },
@@ -216,6 +221,7 @@ const eventSlice = createSlice({
     },
     [acceptEventInvite.rejected]: errorHandler,
     [getAllEvents.rejected]: errorHandler,
+    [getMyEvents.rejected]: errorHandler,
     [updateEvent.rejected]: errorHandler,
   },
 });

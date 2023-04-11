@@ -58,6 +58,15 @@ const getAllCompanyEvents = async (req, res, next) => {
   }
 };
 
+const getMyEvents = async (req, res, next) => {
+  try {
+    const result = await eventService.getMyEvents(req.user.id);
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getTodayEvents = async (req, res, next) => {
   try {
     const result = await eventService.getTodayEvents(req.user.id);
@@ -120,6 +129,7 @@ module.exports = {
   updateEvent,
   getAllEvents,
   getAllCompanyEvents,
+  getMyEvents,
   getTodayEvents,
   getCategories,
   getEvent,

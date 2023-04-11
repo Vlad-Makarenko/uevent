@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 
-import { getCalendar, getMainCalendar } from '../store/calendarSlice';
-import { getAllEvents } from '../store/eventSlice';
+// import { getCalendar, getMainCalendar } from '../store/calendarSlice';
+import { getMyEvents } from '../store/eventSlice';
 import { BigCalendar } from '../components/calendar/BigCalendar';
 import { Loader } from '../components/Loader';
 
@@ -13,29 +13,15 @@ import { infoCalendarOn } from '../store/modalSlice';
 
 export const CalendarPage = () => {
   const dispatch = useDispatch();
-  const { id } = useParams();
-  const { currentCalendar, isLoading: calendarLoading } = useSelector(
-    (state) => state.calendar
-  );
   const { events, isLoading: eventLoading } = useSelector(
     (state) => state.event
   );
 
   useEffect(() => {
-    if (id === 'main') {
-      dispatch(getMainCalendar());
-    } else {
-      dispatch(getCalendar({ id }));
-    }
-  }, [id]);
+    dispatch(getMyEvents());
+  }, []);
 
-  useEffect(() => {
-    if (currentCalendar._id) {
-      dispatch(getAllEvents({ id: currentCalendar._id }));
-    }
-  }, [currentCalendar._id]);
-
-  if (calendarLoading || eventLoading) {
+  if (eventLoading) {
     return <Loader />;
   }
 
@@ -43,7 +29,7 @@ export const CalendarPage = () => {
     <div className='container w-full flex flex-col mx-auto p-3'>
       <div className='w-full flex justify-between items-center mb-2 p-3'>
         <h1 className='text-2xl'>
-          <b>{currentCalendar.name}</b> calendar
+          <b>Your</b> calendar
         </h1>
         <button
         onClick={() => {
@@ -56,7 +42,7 @@ export const CalendarPage = () => {
       <div
         className='w-full flex p-3 border shadow-md shadow-green-200 border-green-300 rounded-md'
         style={{ height: '80vh' }}>
-        <BigCalendar calendar={currentCalendar} events={events} />
+        <BigCalendar events={events} />
       </div>
     </div>
   );

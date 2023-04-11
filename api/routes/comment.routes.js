@@ -9,9 +9,9 @@ router.get('/:eventId', commentController.getComments);
 
 // POST /comments - створити новий коментар
 router.post(
-  '/',
+  '/:id',
   authMiddleware,
-  body('title').trim().notEmpty().withMessage('Title is required'),
+  body('body').trim().notEmpty().withMessage('Body is required'),
   commentController.createComment
 );
 

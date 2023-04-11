@@ -94,8 +94,8 @@ export const NavBar = () => {
             </span>
           </Navbar.Link>
           <Navbar.Link
-            onClick={() => navigate('/hidden')}
-            active={active === 'hidden'}>
+            onClick={() => navigate('/companies')}
+            active={active === 'Companies'}>
             <span
               className={`flex items-center cursor-pointer p-3 px-5 rounded-md border-r hover:bg-gradient-to-l from-gray-100 hover:text-yellow-900 ${
                 active === '/hidden' ? 'bg-gradient-to-l from-green-100' : ''
@@ -105,7 +105,7 @@ export const NavBar = () => {
             </span>
           </Navbar.Link>
           <Navbar.Link
-            onClick={() => navigate('/calendar/main')}
+            onClick={() => navigate('/calendar')}
             active={active === 'calendar'}>
             <span
               className={`flex items-center cursor-pointer p-3 px-5 rounded-md border-r hover:bg-gradient-to-l from-gray-100 hover:text-yellow-900 ${

@@ -45,6 +45,12 @@ const getAllCompanyEvents = async (companyId) => {
   return events;
 };
 
+const getMyEvents = async (userId) => {
+  const events = await Event.find({ attendees: userId })
+    .populate({ path: 'categories', select: 'id name' });
+  return events;
+};
+
 const getAllEvents = async () => {
   const events = await Event.find().populate({
     path: 'categories',
@@ -170,6 +176,7 @@ module.exports = {
   updateEvent,
   getAllEvents,
   getAllCompanyEvents,
+  getMyEvents,
   getTodayEvents,
   getCategories,
   getEventById,

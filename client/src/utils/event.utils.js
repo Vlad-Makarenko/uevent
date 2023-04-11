@@ -9,7 +9,6 @@ export const eventsToCalendar = (events) => events.map((item) => ({
   ...item,
   start: moment(item.startEvent).toDate(),
   end: moment(item.endEvent).toDate(),
-  title: item.name,
 }));
 
 export const getEditEventDate = (data) => ({
@@ -29,7 +28,7 @@ export const eventDateUpdate = (events, data) => events.map((item) => {
       start: data.start,
       endEvent: data.end.toString(),
       end: data.end,
-      allDay: data.isAllDay,
+      allDay: data.isAllDay || false,
     };
   }
   return item;

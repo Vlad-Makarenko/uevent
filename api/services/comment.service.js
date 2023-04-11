@@ -14,7 +14,9 @@ module.exports.createComment = async (eventId, comment) => await Comment
 
 // Read all companies
 module.exports.getAllComments = async (eventId) => {
-  const comments = await Comment.find().where('event').equals(eventId);
+  const comments = await Comment.find()
+    .where('event').equals(eventId)
+    .populate({ path: 'author', select: 'id fullName avatar' });
   return comments;
 };
 

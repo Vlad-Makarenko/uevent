@@ -14,10 +14,11 @@ module.exports.getComments = async (req, res, next) => {
 // Створити новий коментар
 module.exports.createComment = async (req, res, next) => {
   try {
-    const comment = await commentService.createComment(
-      req.body.event,
-      req.body
-    );
+    const comment = await commentService.createComment(req.params.id, {
+      body: req.body.body,
+      author: req.user.id,
+      event: req.params.id,
+    });
     res.json(comment);
   } catch (error) {
     next(error);

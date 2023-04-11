@@ -68,15 +68,15 @@ export const BigCalendar = ({ events }) => {
       events={displayEvents}
       localizer={localizer}
       onEventDrop={onEventDrop}
-      onEventResize={onEventResize}
-      onSelectSlot={() => {
-        if (
-          currentCalendar.participants.some((itm) => itm._id === me.id)
-          || currentCalendar.author._id === me.id
-        ) {
-          dispatch(createEventOn());
-        }
-      }}
+      // onEventResize={onEventResize}
+      // onSelectSlot={() => {
+      //   if (
+      //     currentCalendar.participants.some((itm) => itm._id === me.id)
+      //     || currentCalendar.author._id === me.id
+      //   ) {
+      //     dispatch(createEventOn());
+      //   }
+      // }}
       onSelectEvent={(slotInfo) => {
         dispatch(getEvent({ id: slotInfo._id }));
         dispatch(infoEventOn());

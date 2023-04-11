@@ -8,6 +8,7 @@ const router = new Router();
 router.get('/', eventController.getAllEvents);
 router.get('/categories', eventController.getCategories);
 router.get('/today', authMiddleware, eventController.getTodayEvents);
+router.get('/my', authMiddleware, eventController.getMyEvents);
 router.get('/:id', eventController.getEvent);
 router.get('/company/:companyId', eventController.getAllCompanyEvents);
 router.post('/subscribe/:id', authMiddleware, eventController.subscribeEvent);

@@ -18,7 +18,7 @@ module.exports.commentSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,
-    updatedAt: false,
+    timestamps: { createdAt: true, updatedAt: false },
+    versionKey: false,
   }
 );

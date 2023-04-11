@@ -20,13 +20,13 @@ export const TodayEventCard = ({ event }) => {
         className={`${
           event.isPerformed ? 'line-through' : ''
         } flex h-full items-center w-2/3 font-bold mb-2 py-1 text-xl`}>
-        {event.name}
+        {event.title}
       </div>
       <div className='w-1/3 flex h-full items-center justify-end'>
         <Tooltip
           content={
             <span>
-              This event from <b>{event.parentCalendar.name}</b> calendar
+              This event from <b>some</b> calendar
             </span>
           }>
           <MdInfo color='green' className='mx-1' />

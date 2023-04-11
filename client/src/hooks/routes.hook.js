@@ -20,11 +20,10 @@ export const useRoutes = () => {
       <Route element={<CheckLogin />}>
         {isAuthenticated || buf ? (
           <>
-            {/* <Route path='/' element={<Main />} exact /> */}
             <Route path='/home' element={<Home />} exact />
-            <Route path='/calendar/:id' element={<CalendarPage />} exact />
+            <Route path='/calendar' element={<CalendarPage />} exact />
             <Route path='/user/:id' element={<User />} exact />
-            <Route path='/hidden' element={<Hidden />} exact />
+            <Route path='/companies' element={<Hidden />} exact />
             <Route path='/acceptInvite/event/:key' element={<AcceptInvite isEvent />} exact />
             <Route path='/acceptInvite/calendar/:key' element={<AcceptInvite />} exact />
             <Route
@@ -36,7 +35,7 @@ export const useRoutes = () => {
           </>
         ) : (
           <>
-            <Route path='/' element={<Main />} exact />
+            <Route path='/home' element={<Main />} exact />
             <Route path='/auth' element={<Auth />} exact />
             <Route
               path='/password-reset/:token'
