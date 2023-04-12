@@ -6,6 +6,7 @@ import { ResetPassword } from '../pages/ResetPassword';
 import { Main } from '../pages/Main';
 import { Home } from '../pages/Home';
 import { CalendarPage } from '../pages/CalendarPage';
+import { EventPage } from '../pages/EventPage';
 import { Hidden } from '../pages/Hidden';
 import { Auth } from '../pages/Auth';
 import { CheckLogin } from '../components/CheckLogin';
@@ -24,6 +25,7 @@ export const useRoutes = () => {
             <Route path='/calendar' element={<CalendarPage />} exact />
             <Route path='/user/:id' element={<User />} exact />
             <Route path='/companies' element={<Hidden />} exact />
+            <Route path='/eventPage' element={<EventPage />} exact />
             <Route path='/acceptInvite/event/:key' element={<AcceptInvite isEvent />} exact />
             <Route path='/acceptInvite/calendar/:key' element={<AcceptInvite />} exact />
             <Route
