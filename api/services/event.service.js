@@ -7,7 +7,7 @@ const ApiError = require('../utils/ApiError');
 const createEvent = async (companyId, event) => {
   const company = await Company.findById(companyId);
   if (!company) {
-    throw ApiError.BadRequestError('no such calendar found');
+    throw ApiError.BadRequestError('no such company found');
   }
   const createdEvent = await Event.create(event).then(async (docEvent) => {
     await Company.findByIdAndUpdate(
@@ -55,6 +55,7 @@ const getAllEvents = async () => {
   const events = await Event.find().populate({
     path: 'categories',
     select: 'id name',
+    match: { isPublic: true },
   });
   return events;
 };

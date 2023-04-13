@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { HiSearch } from 'react-icons/hi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { CalendarCard } from '../components/calendar/CalendarCard';
+import { EventCard } from '../components/event/EventCard';
 import { Loader } from '../components/Loader';
 import { ProfileCard } from '../components/user/ProfileCard';
 import { getAllCalendars } from '../store/calendarSlice';
@@ -66,7 +66,7 @@ export const User = () => {
           </div>
           <div className='flex mx-5 my-6 flex-wrap'>
             {calendars.map((calendar) => (
-              <CalendarCard key={calendar._id} calendar={calendar} />
+              <EventCard key={calendar._id} calendar={calendar} />
             ))}
           </div>
         </div>

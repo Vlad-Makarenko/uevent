@@ -20,9 +20,9 @@ export const EventCard = ({ event }) => (
         {formatDate(event.startEvent)}
       </p>
       <div className='text-gray-700 flex self-start text-sm mb-4'>
-        {event.categories.map((cat) => (
+        {event.categories.map((cat, index) => (
           <div
-            key={cat.id}
+            key={index}
             className='p-2 rounded-lg mr-1 text-white bg-green-400'>
             {cat.name}
           </div>

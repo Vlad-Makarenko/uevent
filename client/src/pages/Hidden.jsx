@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { HiSearch } from 'react-icons/hi';
-import { CalendarCard } from '../components/calendar/CalendarCard';
 import { getAllCalendars } from '../store/calendarSlice';
 import { Loader } from '../components/Loader';
+import { EventCard } from '../components/event/EventCard';
 
 export const Hidden = () => {
   const dispatch = useDispatch();
@@ -50,7 +50,7 @@ export const Hidden = () => {
         {calendars.length ? (
           <div className='flex mx-5 my-6 flex-wrap'>
             {calendars.map((calendar, idx) => (
-              <CalendarCard key={idx} calendar={calendar} />
+              <EventCard key={idx} calendar={calendar} />
             ))}
           </div>
         ) : (
