@@ -2,46 +2,35 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { Tooltip } from 'flowbite-react';
-import { getCategories } from '../../store/eventSlice';
-import { prepareCategories, getTimes, filterByTime } from '../../utils/filters.utils';
+import { resetFilters } from '../../store/eventSlice';
+import { prepareCategories, TIME_RADIOS, filterByTime, DEFAULT_FILTERS } from '../../utils/filters.utils';
 
-export const Filters = ({ categories, filteredEvents, setFilteredEvents }) => {
+export const Filters = ({ localFilter, changeHandler, setLocalFilter }) => {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [displayedCategories, setDisplayedCategories] = useState([]);
-  const [times, setTimes] = useState(getTimes);
-  const { events } = useSelector((state) => state.event);
+  const { categories } = useSelector((state) => state.event);
 
   useEffect(() => {
     setDisplayedCategories(prepareCategories(categories));
   }, [categories]);
 
   const handleCategoryFilter = (category) => {
-    setDisplayedCategories(
-      displayedCategories.map((value) => (value._id === category._id
-        ? { ...value, isChecked: !value.isChecked }
-        : { ...value }))
-    );
-    const tempEvents = [...events];
-    console.log(tempEvents);
-    setFilteredEvents(
-      tempEvents.filter((value) => value.categories.some((e) => e._id === category._id))
-    );
-  };
-
-  const handleTimeFilter = (time) => {
-    setTimes(
-      getTimes.map((value) => (value.value === time.value
-        ? { ...value, isChecked: true }
-        : { ...value, isChecked: false }))
-    );
-    setFilteredEvents(filterByTime(events, time.value));
+    const tempCategories = displayedCategories.map((value) => (value._id === category._id
+      ? { ...value, isChecked: !value.isChecked }
+      : { ...value }));
+    setDisplayedCategories(tempCategories);
+    const event = { target: {
+      name: 'categories',
+      value: tempCategories
+    } };
+    changeHandler(event);
   };
 
   const clearHandler = () => {
     setDisplayedCategories(prepareCategories(categories));
-    setTimes(getTimes);
-    setFilteredEvents(events);
+    dispatch(resetFilters());
+    setLocalFilter(DEFAULT_FILTERS);
   };
 
   return (
@@ -56,15 +45,17 @@ export const Filters = ({ categories, filteredEvents, setFilteredEvents }) => {
           <h3 className='font-bold text-lg bg-green-50 flex justify-center items-center h-5 p-5 mb-2'>
             Time
           </h3>
-          {times.map((time, index) => (
-            <div
+          {TIME_RADIOS.map((time, index) => (
+            <button
+              name='date'
               key={index}
+              value={time.value}
               className={`${
-                time.isChecked ? 'bg-green-100' : ''
-              } flex items-center text-lg h-5  p-5 pl-20 cursor-pointer border-b hover:bg-green-50 active:text-blue-500`}
-              onClick={() => handleTimeFilter(time)}>
-              <div>{time.name}</div>
-            </div>
+                time.value === localFilter.date ? 'bg-green-100' : ''
+              } flex w-full items-center text-lg h-5  p-5 pl-20 cursor-pointer border-b hover:bg-green-50`}
+              onClick={changeHandler}>
+              {time.name}
+            </button>
           ))}
         </div>
         <div className='mb-3'>
@@ -76,7 +67,7 @@ export const Filters = ({ categories, filteredEvents, setFilteredEvents }) => {
               key={index}
               className={`${
                 category.isChecked ? 'bg-green-100' : ''
-              } flex items-center text-lg h-5  p-5 pl-20 cursor-pointer border-b hover:bg-green-50 active:text-blue-500`}
+              } flex items-center text-lg h-5  p-5 pl-20 cursor-pointer border-b hover:bg-green-50`}
               onClick={() => handleCategoryFilter(category)}>
               <div>{category.name}</div>
             </div>

@@ -3,6 +3,12 @@ import { toast } from 'react-toastify';
 
 import api from '../http';
 import { API_URL } from '../utils/constants';
+import {
+  DEFAULT_FILTERS,
+  countTotalPages,
+  filterEventsUtil,
+  getCurrentEvents,
+} from '../utils/filters.utils';
 import { errorHandler } from '../utils/errorHandler';
 import { updateEventUtil } from '../utils/event.utils';
 
@@ -151,9 +157,13 @@ const eventSlice = createSlice({
   name: 'event',
   initialState: {
     events: [],
+    filteredEvents: [],
     categories: [],
     todayEvents: [],
     event: {},
+    totalPages: 1,
+    currentPage: 1,
+    currentPageEvents: [],
     eventLoading: false,
     isLoading: false,
     success: false,
@@ -165,6 +175,33 @@ const eventSlice = createSlice({
     },
     setSuccessFalse(state) {
       state.success = false;
+    },
+    filterEvents(state, action) {
+      const filteredEvents = filterEventsUtil(
+        action.payload.events,
+        action.payload.filters
+      );
+      state.filteredEvents = filteredEvents;
+      state.totalPages = countTotalPages(filteredEvents);
+      state.currentPageEvents = getCurrentEvents(filteredEvents, 1);
+      state.currentPage = 1;
+    },
+    changePage(state, action) {
+      state.currentPage = action.payload.page;
+      state.currentPageEvents = getCurrentEvents(
+        action.payload.events,
+        action.payload.page
+      );
+    },
+    resetFilters(state, action) {
+      const filteredEvents = filterEventsUtil(
+        state.events,
+        DEFAULT_FILTERS
+      );
+      state.filteredEvents = filteredEvents;
+      state.totalPages = countTotalPages(filteredEvents);
+      state.currentPageEvents = getCurrentEvents(filteredEvents, 1);
+      state.currentPage = 1;
     },
   },
   extraReducers: {
@@ -204,6 +241,11 @@ const eventSlice = createSlice({
     },
     [getAllEvents.fulfilled]: (state, action) => {
       state.events = action.payload;
+      const filteredEvents = filterEventsUtil(action.payload, DEFAULT_FILTERS);
+      state.filteredEvents = filteredEvents;
+      state.totalPages = countTotalPages(filteredEvents);
+      state.currentPageEvents = getCurrentEvents(filteredEvents, 1);
+      state.currentPage = 1;
       state.isLoading = false;
     },
     [getMyEvents.fulfilled]: (state, action) => {
@@ -247,6 +289,14 @@ const eventSlice = createSlice({
   },
 });
 
-export const { setCurrentEvent, setSuccessFalse } = eventSlice.actions;
+export const {
+  setCurrentEvent,
+  setSuccessFalse,
+  updateFilters,
+  clearFilters,
+  filterEvents,
+  resetFilters,
+  changePage,
+} = eventSlice.actions;
 
 export default eventSlice.reducer;
