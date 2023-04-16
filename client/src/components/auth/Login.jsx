@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { HiAtSymbol } from 'react-icons/hi';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 
+import { useTranslation } from 'react-i18next';
 import { useMessage } from '../../hooks/message.hook';
 import { signIn, googleAuth } from '../../store/authSlice';
 import { PswdInput } from './PwsdInput';
@@ -15,6 +16,7 @@ export const Login = ({ setFormType }) => {
     password: '',
   });
   const { isLoading } = useSelector((state) => state.auth);
+  const { t } = useTranslation();
 
   const responseGoogle = async (response) => {
     dispatch(googleAuth({ token: response.credential }));
@@ -37,7 +39,7 @@ export const Login = ({ setFormType }) => {
     <form
       onSubmit={signInHandler}
       className='flex flex-col justify-center items-center w-full'>
-      <h1 className='text-4xl'>Sign In</h1>
+      <h1 className='text-4xl'>{t('Sign In1')}</h1>
       <label htmlFor='login' className='self-start py-2'>
         Email:
       </label>
@@ -54,31 +56,31 @@ export const Login = ({ setFormType }) => {
         />
       </div>
       <label htmlFor='password' className='self-start py-2'>
-        Password:
+        {t('Password')}:
       </label>
       <PswdInput changeHandler={changeHandler} passwordInput={form.password} />
       <span className='mt-3'>
-        Forgot your password?
+        {t('Forgot your password?')}
         <span
           className='text-green-500 cursor-pointer'
           onClick={() => setFormType('pswdReset')}>
           {'  '}
-          Reset
+          {t('Reset')}
         </span>
       </span>
       <button
         type='submit'
         className='mt-2 mb-2 w-full text-white rounded-md bg-green-500 p-3 hover:bg-green-600 hover:shadow-md hover:shadow-green-400'
         disabled={isLoading}>
-        Sign In
+        {t('Sign In')}
       </button>
       <p>
-        Don’t have an account?
+        {t('Don’t have an account?')}
         <span
           className='text-green-500 cursor-pointer'
           onClick={() => setFormType('register')}>
           {'  '}
-          Sign Up
+          {t('Sign Up')}
         </span>
       </p>
       <div className='w-96 mt-2 pt-4 flex justify-center border-t-2'>

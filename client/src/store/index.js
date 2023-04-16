@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import modalReducer from './modalSlice';
 import userReducer from './userSlice';
 import authReducer from './authSlice';
-import calendarReducer from './calendarSlice';
+import companyReducer from './companySlice';
 import eventReducer from './eventSlice';
 
 export default configureStore({
@@ -10,7 +10,7 @@ export default configureStore({
     user: userReducer,
     modal: modalReducer,
     auth: authReducer,
-    calendar: calendarReducer,
+    company: companyReducer,
     event: eventReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({

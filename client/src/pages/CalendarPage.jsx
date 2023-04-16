@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// import { useParams } from 'react-router-dom';
-
-// import { getCalendar, getMainCalendar } from '../store/calendarSlice';
 import { getMyEvents } from '../store/eventSlice';
 import { BigCalendar } from '../components/calendar/BigCalendar';
 import { Loader } from '../components/Loader';
