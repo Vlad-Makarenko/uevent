@@ -12,6 +12,7 @@ import { Auth } from '../pages/Auth';
 import { CheckLogin } from '../components/CheckLogin';
 import { User } from '../pages/User';
 import { AcceptInvite } from '../pages/AcceptInvite';
+import { TestMapPage } from '../pages/testMapPage';
 
 export const useRoutes = () => {
   const { isAuthenticated, buf } = useSelector((state) => state.auth);
@@ -26,6 +27,7 @@ export const useRoutes = () => {
             <Route path='/user/:id' element={<User />} exact />
             <Route path='/companies' element={<Hidden />} exact />
             <Route path='/eventPage' element={<EventPage />} exact />
+            <Route path='/testMap' element={<TestMapPage />} exact />
             <Route path='/acceptInvite/event/:key' element={<AcceptInvite isEvent />} exact />
             <Route path='/acceptInvite/calendar/:key' element={<AcceptInvite />} exact />
             <Route
