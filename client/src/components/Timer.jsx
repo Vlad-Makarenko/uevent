@@ -30,11 +30,11 @@ const Timer = ({ endDate }) => {
   }
 
   return (
-    <div className='animate-pulse hover:animate-none text-green-400 text-xl'>
-      <span>{timeRemaining.days} дней </span>
-      <span>{timeRemaining.hours} часов </span>
-      <span>{timeRemaining.minutes} минут </span>
-      <span>{timeRemaining.seconds} секунд</span>
+    <div className='animate-pulse hover:animate-none text-green-400 lg:text-xl text-xs'>
+      <span>{timeRemaining.days}d </span>
+      <span>{timeRemaining.hours}h </span>
+      <span>{timeRemaining.minutes}m </span>
+      <span>{timeRemaining.seconds} s</span>
     </div>
   );
 };

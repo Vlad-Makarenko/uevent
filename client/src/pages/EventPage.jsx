@@ -40,20 +40,19 @@ export const EventPage = () => {
   };
   return (
     <div className='container mx-auto '>
-      <div className='flex my-4 justify-between '>
+      <div className='flex flex-col lg:flex-row my-4 lg:justify-between '>
         {/* Render event image */}
-        <div className='flex w-3/12'>
-          <img src={event.imageUrl} alt={event.title} className='h-auto mr-4' />
+        <div className='flex lg:w-3/12 w-full justify-center'>
+          <img src={event.imageUrl} alt={event.title} className='w-11/12 h-auto lg:mr-4 object-cover rounded-md shadow-xl shadow-green-100' />
         </div>
         {/* Render event title */}
-        <div className='flex bg-white w-6/12'>
-          {/* Остальной код */}
-          <div className='flex flex-col flex-grow p-4 '>
-            <h2 className='text-5xl font-bold text-left'>{event.title}</h2>
-            <div className='flex w-full h-1/3 items-center'>
+        <div className='flex bg-white lg:w-6/12 w-full'>
+          <div className='flex flex-col flex-grow p-4'>
+            <h2 className='lg:text-5xl text-2xl font-bold lg:text-left'>{event.title}</h2>
+            <div className='flex w-full lg:h-1/3 my-3 items-center'>
               {/* Блок с надписью1 */}
               <div className='flex flex-col items-center justify-center border-r border-gray-300 w-1/2 h-5/6'>
-                <h3 className='text-3xl font-bold'>{event.date}</h3>
+                <h3 className='lg:text-3xl text-xl font-bold'>{event.date}</h3>
                 <Timer endDate='2023-05-01T00:00:00' />
               </div>
               {/* Блок с надписью2 */}
@@ -65,7 +64,8 @@ export const EventPage = () => {
             <MapContainer
               center={[event.latitude, event.longtitude]}
               zoom={16}
-              style={{ height: '60%', width: '100%' }}>
+              style={{ height: '320px', width: '100%' }}
+              >
               <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
               <Marker
                 position={[event.latitude, event.longtitude]}
@@ -76,7 +76,7 @@ export const EventPage = () => {
           </div>
         </div>
         {/* Render buy ticket/sign to event button */}
-        <div className='border rounded px-4 py-2  flex flex-col items-center self-center w-3/12'>
+        <div className='border rounded px-4 py-2 flex flex-col items-center self-center lg:w-3/12 w-full'>
           <div className='w-full py-5 border-b'>Price: {event.price}</div>
           <div className='w-full border-b py-5'>
             <button
