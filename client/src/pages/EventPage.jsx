@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
+import L from 'leaflet'; // Импорт библиотеки Leaflet
+import Timer from '../components/Timer';
 import 'leaflet/dist/leaflet.css'; // Импорт стилей Leaflet
 // import { Loader } from '../components/Loader';
-import L from 'leaflet'; // Импорт библиотеки Leaflet
 
 // Импорт изображения маркера
 import markerIcon from '../assets/google-maps.png';
@@ -33,29 +34,38 @@ export const EventPage = () => {
     price: '100$',
     latitude: 47.83393628153078,
     longtitude: 32.82901672846842,
-    adress: '187, Миру вулиця, Казанка, Казанківська селищна громада, Баштанський район, Миколаївська область, 56000, Україна'
+    adress:
+      '187, Миру вулиця, Казанка, Казанківська селищна громада, Баштанський район, Миколаївська область, 56000, Україна',
+    date: '2023-07-15',
   };
   return (
     <div className='container mx-auto '>
       <div className='flex my-4 justify-between '>
         {/* Render event image */}
         <div className='flex w-3/12'>
-          <img
-            src={event.imageUrl}
-            alt={event.title}
-            className='h-auto mr-4'
-          />
+          <img src={event.imageUrl} alt={event.title} className='h-auto mr-4' />
         </div>
         {/* Render event title */}
         <div className='flex bg-white w-6/12'>
           {/* Остальной код */}
           <div className='flex flex-col flex-grow p-4 '>
             <h2 className='text-5xl font-bold text-left'>{event.title}</h2>
+            <div className='flex w-full h-1/3 items-center'>
+              {/* Блок с надписью1 */}
+              <div className='flex flex-col items-center justify-center border-r border-gray-300 w-1/2 h-5/6'>
+                <h3 className='text-3xl font-bold'>{event.date}</h3>
+                <Timer endDate='2023-05-01T00:00:00' />
+              </div>
+              {/* Блок с надписью2 */}
+              <div className='flex flex-grow items-center justify-center h-5/6'>
+                <p className='text-center'>Надпись2</p>
+              </div>
+            </div>
             {/* Компонент с картой */}
             <MapContainer
               center={[event.latitude, event.longtitude]}
               zoom={16}
-              style={{ height: '40%', width: '100%' }}>
+              style={{ height: '60%', width: '100%' }}>
               <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
               <Marker
                 position={[event.latitude, event.longtitude]}
