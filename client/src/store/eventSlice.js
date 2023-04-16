@@ -3,6 +3,12 @@ import { toast } from 'react-toastify';
 
 import api from '../http';
 import { API_URL } from '../utils/constants';
+import {
+  DEFAULT_FILTERS,
+  countTotalPages,
+  filterEventsUtil,
+  getCurrentEvents,
+} from '../utils/filters.utils';
 import { errorHandler } from '../utils/errorHandler';
 import { updateEventUtil } from '../utils/event.utils';
 
@@ -32,9 +38,21 @@ export const getEvent = createAsyncThunk(
 
 export const getAllEvents = createAsyncThunk(
   'event/getAllEvents',
-  async ({ id }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get(`${API_URL}/event/calendar/${id}`);
+      const response = await api.get(`${API_URL}/event`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getCategories = createAsyncThunk(
+  'event/getCategories',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`${API_URL}/event/categories`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -139,8 +157,13 @@ const eventSlice = createSlice({
   name: 'event',
   initialState: {
     events: [],
+    filteredEvents: [],
+    categories: [],
     todayEvents: [],
     event: {},
+    totalPages: 1,
+    currentPage: 1,
+    currentPageEvents: [],
     eventLoading: false,
     isLoading: false,
     success: false,
@@ -153,9 +176,39 @@ const eventSlice = createSlice({
     setSuccessFalse(state) {
       state.success = false;
     },
+    filterEvents(state, action) {
+      const filteredEvents = filterEventsUtil(
+        action.payload.events,
+        action.payload.filters
+      );
+      state.filteredEvents = filteredEvents;
+      state.totalPages = countTotalPages(filteredEvents);
+      state.currentPageEvents = getCurrentEvents(filteredEvents, 1);
+      state.currentPage = 1;
+    },
+    changePage(state, action) {
+      state.currentPage = action.payload.page;
+      state.currentPageEvents = getCurrentEvents(
+        action.payload.events,
+        action.payload.page
+      );
+    },
+    resetFilters(state, action) {
+      const filteredEvents = filterEventsUtil(
+        state.events,
+        DEFAULT_FILTERS
+      );
+      state.filteredEvents = filteredEvents;
+      state.totalPages = countTotalPages(filteredEvents);
+      state.currentPageEvents = getCurrentEvents(filteredEvents, 1);
+      state.currentPage = 1;
+    },
   },
   extraReducers: {
     [getTodayEvents.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [getCategories.pending]: (state) => {
       state.isLoading = true;
     },
     [getEvent.pending]: (state) => {
@@ -182,8 +235,17 @@ const eventSlice = createSlice({
       state.event = action.payload;
       state.eventLoading = false;
     },
+    [getCategories.fulfilled]: (state, action) => {
+      state.categories = action.payload;
+      state.isLoading = false;
+    },
     [getAllEvents.fulfilled]: (state, action) => {
       state.events = action.payload;
+      const filteredEvents = filterEventsUtil(action.payload, DEFAULT_FILTERS);
+      state.filteredEvents = filteredEvents;
+      state.totalPages = countTotalPages(filteredEvents);
+      state.currentPageEvents = getCurrentEvents(filteredEvents, 1);
+      state.currentPage = 1;
       state.isLoading = false;
     },
     [getMyEvents.fulfilled]: (state, action) => {
@@ -220,12 +282,21 @@ const eventSlice = createSlice({
       console.log('Request error: ', action.payload);
     },
     [acceptEventInvite.rejected]: errorHandler,
+    [getCategories.rejected]: errorHandler,
     [getAllEvents.rejected]: errorHandler,
     [getMyEvents.rejected]: errorHandler,
     [updateEvent.rejected]: errorHandler,
   },
 });
 
-export const { setCurrentEvent, setSuccessFalse } = eventSlice.actions;
+export const {
+  setCurrentEvent,
+  setSuccessFalse,
+  updateFilters,
+  clearFilters,
+  filterEvents,
+  resetFilters,
+  changePage,
+} = eventSlice.actions;
 
 export default eventSlice.reducer;

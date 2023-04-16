@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BsEyeFill, BsEyeSlashFill, BsLockFill } from 'react-icons/bs';
 
 export const PswdInput = ({ changeHandler, passwordInput, isRepeated }) => {
   const [passwordType, setPasswordType] = useState('password');
+  const { t } = useTranslation();
 
   const togglePassword = () => {
     if (passwordType === 'password') {
@@ -22,7 +24,7 @@ export const PswdInput = ({ changeHandler, passwordInput, isRepeated }) => {
         value={passwordInput}
         name={isRepeated ? 'repeatedPassword' : 'password'}
         className='w-full bg-transparent border-0 p-3 focus:outline-none focus:border-0'
-        placeholder={isRepeated ? 'Repeate password' : 'Password'}
+        placeholder={isRepeated ? `${t('Repeat password')}` : `${t('Password')}`}
       />
       <div onClick={togglePassword} className='d-flex align-items-center'>
         {passwordType === 'password' ? (

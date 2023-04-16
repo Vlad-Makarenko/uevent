@@ -15,7 +15,7 @@ import { useMessage } from '../../hooks/message.hook';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { getEvent, updateEvent } from '../../store/eventSlice';
-import { createEventOn, infoEventOn } from '../../store/modalSlice';
+import { infoEventOn } from '../../store/modalSlice';
 
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
@@ -23,9 +23,6 @@ const DnDCalendar = withDragAndDrop(Calendar);
 export const BigCalendar = ({ events }) => {
   const message = useMessage();
   const dispatch = useDispatch();
-
-  const { currentCalendar } = useSelector((state) => state.calendar);
-  const { me } = useSelector((state) => state.auth);
 
   const { views } = useMemo(() => ({
     views: { month: true, day: true, week: true },

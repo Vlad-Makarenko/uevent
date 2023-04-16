@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { HiAtSymbol } from 'react-icons/hi';
 
+import { useTranslation } from 'react-i18next';
 import { resetPswd } from '../../store/authSlice';
 
 export const PswdResetForm = ({ setFormType }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+
   const [form, setForm] = useState({
     email: '',
   });
@@ -24,10 +27,9 @@ export const PswdResetForm = ({ setFormType }) => {
     <form
       onSubmit={resetHandler}
       className='flex flex-col justify-center items-center w-full'>
-      <h2 className='text-4xl py-4'>Reset password</h2>
+      <h2 className='text-4xl py-4'>{t('Reset Password')}</h2>
       <p className='self-start pl-3 pr-1 text-start'>
-        Enter the email from the account for which you want to reset the
-        password. We will send a password reset link to this email.
+        {t('resetInfo')}
       </p>
       <label htmlFor='email' className='self-start py-3'>
         Email:
@@ -48,15 +50,15 @@ export const PswdResetForm = ({ setFormType }) => {
         type='submit'
         className='mt-2 mb-2 w-full text-white rounded-md bg-green-500 p-3 hover:bg-green-600 hover:shadow-md hover:shadow-green-400'
         disabled={isLoading}>
-        Send mail
+        {t('Send mail')}
       </button>
       <span>
-        Back to
+        {t('Back to')}
         <span
           className='text-green-300 cursor-pointer'
           onClick={() => setFormType('login')}>
           {'  '}
-          Sign In
+          {t('Sign In')}
         </span>
       </span>
     </form>

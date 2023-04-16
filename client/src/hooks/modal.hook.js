@@ -1,9 +1,6 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CalendarCreateForm } from '../components/calendar/CalendarCreateForm';
-import { EditCalendarForm } from '../components/calendar/EditCalendarForm';
-import { InfoCalendarForm } from '../components/calendar/InfoCalendarForm';
 import { CreateEventForm } from '../components/event/CreateEventForm';
 import { EditEventForm } from '../components/event/EditEventForm';
 import { InfoEventForm } from '../components/event/InfoEventForm';
@@ -40,22 +37,10 @@ export const useModal = () => {
         <ProfileSettings />
       </ModalWin>
       <ModalWin
-        show={createCalendar}
-        header={'Calendar creation'}
-        onHide={() => dispatch(createCalendarOff())}>
-        <CalendarCreateForm />
-      </ModalWin>
-      <ModalWin
         show={createEvent}
         header={'Event creation'}
         onHide={() => dispatch(createEventOff())}>
         <CreateEventForm />
-      </ModalWin>
-      <ModalWin
-        show={editCalendar}
-        header={'Calendar edition'}
-        onHide={() => dispatch(editCalendarOff())}>
-        <EditCalendarForm />
       </ModalWin>
       <ModalWin
         show={editEvent}
@@ -77,21 +62,6 @@ export const useModal = () => {
         }
         onHide={() => dispatch(infoEventOff())}>
         <InfoEventForm />
-      </ModalWin>
-      <ModalWin
-        show={infoCalendar}
-        header={
-          <div>
-            <h3 className='text-lg font-medium leading-6 text-gray-900'>
-              Calendar Information
-            </h3>
-            <p className='mt-1 max-w-2xl text-sm text-gray-500'>
-              Details about calendar
-            </p>
-          </div>
-        }
-        onHide={() => dispatch(infoCalendarOff())}>
-        <InfoCalendarForm />
       </ModalWin>
     </div>
   );

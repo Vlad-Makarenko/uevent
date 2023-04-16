@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { HiSearch } from 'react-icons/hi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { CalendarCard } from '../components/calendar/CalendarCard';
+import { useTranslation } from 'react-i18next';
+import { EventCard } from '../components/event/EventCard';
 import { Loader } from '../components/Loader';
 import { ProfileCard } from '../components/user/ProfileCard';
-import { getAllCalendars } from '../store/calendarSlice';
+import { getAllCompanies } from '../store/companySlice';
 import { getUser } from '../store/userSlice';
 
 export const User = () => {
@@ -14,8 +15,10 @@ export const User = () => {
   const [search, setSearch] = useState('');
   const [calendars, setCalendars] = useState([]);
   const { user, isLoading: userLoading } = useSelector((state) => state.user);
+  const { t } = useTranslation();
+
   useEffect(() => {
-    dispatch(getAllCalendars());
+    dispatch(getAllCompanies());
   }, []);
 
   useEffect(() => {
@@ -42,7 +45,7 @@ export const User = () => {
       ) : (
         <div className='w-full lg:w-1/3'>
           <div className='overflow-y-auto h-full lg:h-5/6 flex flex-col items-center mt-6 border shadow-md shadow-green-400 border-green-200 rounded-xl'>
-            <ProfileCard user={user}/>
+            <ProfileCard user={user} />
           </div>
         </div>
       )}
@@ -60,13 +63,13 @@ export const User = () => {
                 value={search}
                 name='search'
                 className='w-full bg-transparent border-0 p-3 focus:outline-none focus:border-0'
-                placeholder='Search...'
+                placeholder={`${t('Search')}...`}
               />
             </div>
           </div>
           <div className='flex mx-5 my-6 flex-wrap'>
             {calendars.map((calendar) => (
-              <CalendarCard key={calendar._id} calendar={calendar} />
+              <EventCard key={calendar._id} calendar={calendar} />
             ))}
           </div>
         </div>

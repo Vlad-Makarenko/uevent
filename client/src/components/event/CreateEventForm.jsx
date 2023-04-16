@@ -9,7 +9,7 @@ import { eventTypes } from '../../utils/event.utils';
 export const CreateEventForm = () => {
   const dispatch = useDispatch();
 
-  const { currentCalendar } = useSelector((state) => state.calendar);
+  // const { currentCalendar } = useSelector((state) => state.calendar);
   const { isLoading, success } = useSelector((state) => state.event);
   const [form, setForm] = useState({
     name: '',
@@ -63,7 +63,7 @@ export const CreateEventForm = () => {
     dispatch(
       createEvent({
         ...form,
-        id: currentCalendar._id,
+        // id: currentCalendar._id,
         startEvent: new Date(form.startEvent).toISOString(),
         endEvent: new Date(
           form.endEvent || new Date(form.startEvent)
