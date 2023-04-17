@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import api from '../http';
 import { API_URL } from '../utils/constants';
 import { subscribeEvent } from '../store/eventSlice';
+import { formatDate } from '../utils/date.utils';
 
 const PaymentModal = () => {
   const stripe = useStripe();
@@ -19,7 +20,7 @@ const PaymentModal = () => {
 
     const cardElement = elements.getElement(CardElement);
     const response = await api.post(`${API_URL}/event/create-payment-intent`, {
-      amount: 1000, // Сумма платежа в центах
+      amount: currEvent.price, // Сумма платежа в центах
       currency: 'usd', // Валюта платежа
     });
 
@@ -35,7 +36,17 @@ const PaymentModal = () => {
       if (result.error) {
         setError(result.error.message);
       } else {
-        dispatch(subscribeEvent({ id: currEvent._id }));
+        console.log(result);
+        dispatch(
+          subscribeEvent({
+            id: currEvent._id,
+            paymentIntentId: result.paymentIntent.id,
+            price: currEvent.price,
+            title: currEvent.title,
+            startEvent: formatDate(currEvent.startEvent),
+            endEvent: formatDate(currEvent.endEvent),
+          })
+        ); //
         console.log('Платеж успешно подтвержден:', result.paymentIntent);
       }
     } else {

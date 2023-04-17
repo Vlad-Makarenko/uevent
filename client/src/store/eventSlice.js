@@ -123,9 +123,16 @@ export const createComment = createAsyncThunk(
 
 export const subscribeEvent = createAsyncThunk(
   'event/subscribeEvent',
-  async ({ id }, { rejectWithValue }) => {
+  async ({ id, paymentIntentId, price, title, startEvent, endEvent }, { rejectWithValue }) => {
     try {
-      const response = await api.post(`${API_URL}/event/subscribe/${id}`);
+      console.log('bebra');
+      const response = await api.post(`${API_URL}/event/subscribe/${id}`, {
+        paymentIntentId,
+        price,
+        title,
+        startEvent,
+        endEvent
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -346,6 +353,7 @@ const eventSlice = createSlice({
       toast.error(action.payload.message);
       console.log('Request error: ', action.payload);
     },
+    [subscribeEvent.rejected]: errorHandler,
     [acceptEventInvite.rejected]: errorHandler,
     [createComment.rejected]: errorHandler,
     [getAllComments.rejected]: errorHandler,

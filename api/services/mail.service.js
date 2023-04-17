@@ -29,6 +29,25 @@ class MailService {
     });
   }
 
+  async sendTicket(to, paymentIntentId, eventTitle, eventId) {
+    await this.transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to,
+      subject: `Your ticket for ${eventTitle}`,
+      text: '',
+      html: `
+                <div>
+                <h1>Your ticket for the event is attached to this mail! Have a great time!</h1>
+                <a href="${process.env.CLIENT_URL}/event/${eventId}">click to visit event page</a>
+                </div>
+            `,
+      attachments: [{
+        filename: 'ticket.pdf',
+        path: `./public/${paymentIntentId}.pdf`
+      }]
+    });
+  }
+
   async sendInviteCalendar(to, token, from, calendarId) {
     const calendar = await Calendar.findById(calendarId);
     const link = `${process.env.API_URL}/api/calendar/acceptInvite/${token}`;
