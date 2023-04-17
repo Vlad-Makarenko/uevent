@@ -8,18 +8,19 @@ import { ModalWin } from '../components/ModalWin';
 import { ProfileSettings } from '../components/user/ProfileSettings';
 import {
   createEventOff,
-  createCalendarOff,
+  paymentOff,
   editCalendarOff,
   editEventOff,
   infoEventOff,
   settingsOff,
   infoCalendarOff,
 } from '../store/modalSlice';
+import PaymentModal from '../components/PaymentModal';
 
 export const useModal = () => {
   const dispatch = useDispatch();
   const {
-    createCalendar,
+    payment,
     editCalendar,
     createEvent,
     editEvent,
@@ -41,6 +42,12 @@ export const useModal = () => {
         header={'Event creation'}
         onHide={() => dispatch(createEventOff())}>
         <CreateEventForm />
+      </ModalWin>
+      <ModalWin
+        show={payment}
+        header={'Payment'}
+        onHide={() => dispatch(paymentOff())}>
+        <PaymentModal />
       </ModalWin>
       <ModalWin
         show={editEvent}

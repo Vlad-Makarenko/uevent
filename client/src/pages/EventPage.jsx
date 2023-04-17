@@ -11,11 +11,13 @@ import {
   getAllEvents,
   getEvent,
   setSuccessFalse,
+  subscribeEvent,
 } from '../store/eventSlice';
 import { Map } from '../components/Map';
 import { formatDate } from '../utils/date.utils';
 import { CommentCard } from '../components/event/CommentCard';
 import { EventCard } from '../components/event/EventCard';
+import { paymentOn } from '../store/modalSlice';
 
 export const EventPage = () => {
   const dispatch = useDispatch();
@@ -48,7 +50,13 @@ export const EventPage = () => {
     }
   }, [event, events, filteredEvents]);
 
-  const handleBuyTicket = () => {};
+  const handleBuyTicket = () => {
+    if (event.price) {
+      dispatch(paymentOn());
+    } else {
+      dispatch(subscribeEvent({ id: event._id }));
+    }
+  };
   const createCommentHandler = () => {
     dispatch(createComment({ id, body: commentInp }));
   };
@@ -169,7 +177,8 @@ export const EventPage = () => {
                 )}
               </div>
               <div className='flex items-center ml-2'>
-                {t('Participants')}: {event.attendees.length} / {event.maxAttendees}
+                {t('Participants')}: {event.attendees.length} /{' '}
+                {event.maxAttendees}
               </div>
             </div>
           </div>
@@ -182,7 +191,9 @@ export const EventPage = () => {
         <p className='text-start mt-1'>{event.description}</p>
       </div>
       <div className='mt-10'>
-        <h2 className='text-xl font-bold text-start lg:text-3xl'>{t('Comments')}</h2>
+        <h2 className='text-xl font-bold text-start lg:text-3xl'>
+          {t('Comments')}
+        </h2>
         <div className='overflow-y-auto max-h-80'>
           {comments.length ? (
             comments.map((comment, index) => (

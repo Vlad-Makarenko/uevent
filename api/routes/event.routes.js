@@ -12,15 +12,11 @@ const router = new Router();
 // Маршрут для создания платежа
 router.post('/create-payment-intent', async (req, res) => {
   try {
-    console.log(req.body);
-    const { amount, currency } = JSON.parse(req.body.body);
-    console.log(amount);
-    // Создаем платежный интент с указанными суммой и валютой
+    const { amount, currency } = req.body;
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency,
     });
-
     // Отправляем клиентский секрет обратно на клиентскую сторону
     res.status(200).json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {

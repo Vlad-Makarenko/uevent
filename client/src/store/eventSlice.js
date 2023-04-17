@@ -121,6 +121,18 @@ export const createComment = createAsyncThunk(
   }
 );
 
+export const subscribeEvent = createAsyncThunk(
+  'event/subscribeEvent',
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`${API_URL}/event/subscribe/${id}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const updateEvent = createAsyncThunk(
   'event/updateEvent',
   async (
@@ -250,6 +262,10 @@ const eventSlice = createSlice({
     [getEvent.pending]: (state) => {
       state.isLoading = true;
     },
+    [subscribeEvent.pending]: (state) => {
+      state.isLoading = true;
+      state.success = false;
+    },
     [getAllEvents.pending]: (state) => {
       state.isLoading = true;
     },
@@ -268,6 +284,10 @@ const eventSlice = createSlice({
     },
     [getTodayEvents.fulfilled]: (state, action) => {
       state.todayEvents = action.payload;
+    },
+    [subscribeEvent.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      state.success = true;
     },
     [getAllComments.fulfilled]: (state, action) => {
       state.comments = action.payload;

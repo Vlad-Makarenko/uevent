@@ -15,12 +15,12 @@ const markerIconConfig = new L.Icon({
 export const Map = ({ location }) => (
   <div>
     <MapContainer
-      center={[location.latitude, location.longitude]}
+      center={[location.latitude || 0, location.longitude || 0]}
       zoom={16}
-      style={{ height: '320px', width: '100%' }}>
+      style={{ height: '320px', width: '100%', zIndex: '1' }}>
       <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
       <Marker
-        position={[location.latitude, location.longitude]}
+        position={[location.latitude || 0, location.longitude || 0]}
         icon={markerIconConfig}
       />
     </MapContainer>

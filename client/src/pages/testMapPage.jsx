@@ -68,7 +68,7 @@ export const TestMapPage = () => {
   return (
     <div className='flex bg-white rounded-lg shadow-lg'>
       <div className='flex flex-col flex-grow p-4 justify-between'>
-        <PaymentModal></PaymentModal>
+        {/* <PaymentModal></PaymentModal> */}
         <h2 className='text-xl font-bold text-left'>{eventOne.title}</h2>
         <MapContainer
           center={[eventOne.latitude, eventOne.longtitude]}

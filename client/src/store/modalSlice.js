@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const modalSlice = createSlice({
   name: 'modal',
   initialState: {
-    createCalendar: false,
+    payment: false,
     editCalendar: false,
     createEvent: false,
     editEvent: false,
@@ -18,11 +18,11 @@ const modalSlice = createSlice({
     settingsOff(state) {
       state.settings = false;
     },
-    createCalendarOn(state) {
-      state.createCalendar = true;
+    paymentOn(state) {
+      state.payment = true;
     },
-    createCalendarOff(state) {
-      state.createCalendar = false;
+    paymentOff(state) {
+      state.payment = false;
     },
     editCalendarOn(state) {
       state.editCalendar = true;
@@ -58,8 +58,8 @@ const modalSlice = createSlice({
 });
 
 export const {
-  createCalendarOn,
-  createCalendarOff,
+  paymentOn,
+  paymentOff,
   createEventOn,
   createEventOff,
   editCalendarOn,
