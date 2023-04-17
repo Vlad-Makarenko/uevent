@@ -3,6 +3,7 @@ const { companySchema } = require('./Company');
 const { categorySchema } = require('./Category');
 const { eventSchema } = require('./Event');
 const { commentSchema } = require('./Comment');
+const { promocodeSchema } = require('./Promocode');
 const { tokenSchema } = require('./Token');
 const { userSchema } = require('./User');
 
@@ -11,6 +12,7 @@ const InitDB = async () => {
 };
 
 module.exports.Company = mongoose.model('Company', companySchema, 'company');
+module.exports.Promocode = mongoose.model('Promocode', promocodeSchema, 'promocode');
 module.exports.Category = mongoose.model('Category', categorySchema, 'category');
 module.exports.Event = mongoose.model('Event', eventSchema, 'event');
 module.exports.Comment = mongoose.model('Comment', commentSchema, 'comment');

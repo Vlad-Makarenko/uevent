@@ -10,6 +10,7 @@ import {
   getAllComments,
   getAllEvents,
   getEvent,
+  setPaymentSuccessFalse,
   setSuccessFalse,
   subscribeEvent,
 } from '../store/eventSlice';
@@ -17,7 +18,7 @@ import { Map } from '../components/Map';
 import { formatDate } from '../utils/date.utils';
 import { CommentCard } from '../components/event/CommentCard';
 import { EventCard } from '../components/event/EventCard';
-import { paymentOn } from '../store/modalSlice';
+import { paymentOff, paymentOn } from '../store/modalSlice';
 
 export const EventPage = () => {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ export const EventPage = () => {
   const [commentInp, setCommentInp] = useState('');
   const [simEvent, setSimEvent] = useState([]);
   const { event, comments, isLoading, success,
-    filteredEvents, events } = useSelector((state) => state.event);
+    filteredEvents, events, paymentSuccess } = useSelector((state) => state.event);
   const { me } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
@@ -39,6 +40,14 @@ export const EventPage = () => {
     }
     dispatch(setSuccessFalse());
   }, [id]);
+
+  useEffect(() => {
+    if (paymentSuccess) {
+      dispatch(getEvent({ id }));
+      dispatch(paymentOff());
+      dispatch(setPaymentSuccessFalse());
+    }
+  }, [paymentSuccess]);
 
   useEffect(() => {
     if (filteredEvents.length) {

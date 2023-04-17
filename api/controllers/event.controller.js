@@ -110,7 +110,6 @@ const deleteEvent = async (req, res, next) => {
 
 const subscribeEvent = async (req, res, next) => {
   try {
-    console.log('bebra');
     if (req.body) {
       const eventId = req.params.id;
       const {

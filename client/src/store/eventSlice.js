@@ -10,7 +10,6 @@ import {
   getCurrentEvents,
 } from '../utils/filters.utils';
 import { errorHandler } from '../utils/errorHandler';
-import { updateEventUtil } from '../utils/event.utils';
 
 export const getTodayEvents = createAsyncThunk(
   'event/getTodayEvents',
@@ -126,7 +125,6 @@ export const subscribeEvent = createAsyncThunk(
   'event/subscribeEvent',
   async ({ id, paymentIntentId, price, title, startEvent, endEvent }, { rejectWithValue }) => {
     try {
-      console.log('bebra');
       const response = await api.post(`${API_URL}/event/subscribe/${id}`, {
         paymentIntentId,
         price,
@@ -232,6 +230,7 @@ const eventSlice = createSlice({
     currentPageEvents: [],
     isLoading: false,
     success: true,
+    paymentSuccess: false,
   },
   reducers: {
     setCurrentEvent(state, action) {
@@ -240,6 +239,9 @@ const eventSlice = createSlice({
     },
     setSuccessFalse(state) {
       state.success = false;
+    },
+    setPaymentSuccessFalse(state) {
+      state.paymentSuccess = false;
     },
     filterEvents(state, action) {
       const filteredEvents = filterEventsUtil(
@@ -258,7 +260,7 @@ const eventSlice = createSlice({
         action.payload.page
       );
     },
-    resetFilters(state, action) {
+    resetFilters(state) {
       const filteredEvents = filterEventsUtil(state.events, DEFAULT_FILTERS);
       state.filteredEvents = filteredEvents;
       state.totalPages = countTotalPages(filteredEvents);
@@ -267,7 +269,6 @@ const eventSlice = createSlice({
     },
   },
   extraReducers: {
-    [getTodayEvents.pending]: (state) => {},
     [getCategories.pending]: (state) => {
       state.categoriesLoading = true;
     },
@@ -304,9 +305,9 @@ const eventSlice = createSlice({
     [getCompanyEvents.fulfilled]: (state, action) => {
       state.companyEvents = action.payload;
     },
-    [subscribeEvent.fulfilled]: (state, action) => {
+    [subscribeEvent.fulfilled]: (state) => {
       state.isLoading = false;
-      // state.success = true;
+      state.paymentSuccess = true;
     },
     [getAllComments.fulfilled]: (state, action) => {
       state.comments = action.payload;
@@ -346,7 +347,7 @@ const eventSlice = createSlice({
       toast.success('Invite has been successfully accepted!');
       state.isLoading = false;
     },
-    [updateEvent.fulfilled]: (state, action) => {
+    [updateEvent.fulfilled]: (state) => {
       toast.success('Event has been successfully updated!');
       state.isLoading = false;
       state.success = true;
@@ -383,6 +384,7 @@ export const {
   filterEvents,
   resetFilters,
   changePage,
+  setPaymentSuccessFalse,
 } = eventSlice.actions;
 
 export default eventSlice.reducer;

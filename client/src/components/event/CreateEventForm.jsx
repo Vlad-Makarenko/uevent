@@ -50,6 +50,7 @@ export const CreateEventForm = () => {
   });
   const [isMarkerVisible, setMarkerVisible] = useState(false);
   const [tagOptions, setTagOptions] = useState([]);
+  const [promo, setPromo] = useState('');
   const [compOptions, setCompOptions] = useState([]);
   const [map, setMap] = useState({
     lat: 50,
@@ -123,6 +124,9 @@ export const CreateEventForm = () => {
   const changeHandler = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value });
   };
+  const promoHandler = (event) => {
+    setPromo(event.target.value);
+  };
 
   const createHandler = (event) => {
     event.preventDefault();
@@ -180,6 +184,20 @@ export const CreateEventForm = () => {
           name='banner'
           className='w-full bg-transparent border-0 p-3 focus:border-0 focus:outline-none focus:border-green-400'
           placeholder='Enter link to banner'
+        />
+      </div>
+      <label htmlFor='name' className='font-semibold text-lg mt-2 self-start my-1'>
+        {t('Promo code')}:
+      </label>
+      <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
+        <input
+          type='text'
+          required
+          onChange={promoHandler}
+          value={promo}
+          name='promo'
+          className='w-full bg-transparent border-0 p-3 focus:border-0 focus:outline-none focus:border-green-400'
+          placeholder='Enter promo code'
         />
       </div>
       <label htmlFor='name' className='font-semibold text-lg mt-2 self-start my-1'>
