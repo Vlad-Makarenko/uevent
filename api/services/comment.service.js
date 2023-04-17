@@ -2,8 +2,8 @@ const ApiError = require('../utils/ApiError');
 
 const { Comment, User, Event } = require('../models');
 
-module.exports.createComment = async (eventId, comment) => await Comment
-  .create(comment).then(async (docCompany) => {
+module.exports.createComment = async (eventId, comment) => {
+  const temp = await Comment.create(comment).then(async (docCompany) => {
     await Event.findByIdAndUpdate(
       eventId,
       { $push: { comments: docCompany.id } },
@@ -11,11 +11,17 @@ module.exports.createComment = async (eventId, comment) => await Comment
     );
     return docCompany;
   });
+  return await Comment.findById(temp.id).populate({
+    path: 'author',
+    select: 'id fullName avatar',
+  });
+};
 
 // Read all companies
 module.exports.getAllComments = async (eventId) => {
   const comments = await Comment.find()
-    .where('event').equals(eventId)
+    .where('event')
+    .equals(eventId)
     .populate({ path: 'author', select: 'id fullName avatar' });
   return comments;
 };

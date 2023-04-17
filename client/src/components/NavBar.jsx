@@ -28,7 +28,14 @@ export const NavBar = () => {
 
   const changeLanguage = (language) => {
     i18n.changeLanguage(language);
+    localStorage.setItem('language', language);
   };
+
+  useEffect(() => {
+    i18n.changeLanguage(
+      localStorage.getItem('language') === 'uk' ? 'uk' : 'en'
+    );
+  }, []);
 
   useEffect(() => {
     setActive(location.pathname);
