@@ -10,6 +10,10 @@ export const CompanyCard = ({ company }) => (
     <img
       className='lg:w-5/12 w-full h-64 object-cover'
       src={company.logoUrl}
+      onError={({ currentTarget }) => {
+        currentTarget.onerror = null;
+        currentTarget.src = 'https://www.seekpng.com/png/detail/125-1257164_search-event-fiesta-icon-png.png';
+      }}
       alt={company.name}
     />
     <div className='flex flex-col lg:w-7/12 px-4 justify-between my-3'>

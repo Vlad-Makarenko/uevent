@@ -4,10 +4,8 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useTranslation } from 'react-i18next';
-
-import { useNavigate, useParams } from 'react-router-dom';
-import { deleteEvent, getEvent, updateEvent } from '../../store/eventSlice';
 import markerIcon from '../../assets/google-maps.png';
+import { createCompany } from '../../store/companySlice';
 
 const markerIconConfig = new L.Icon({
   iconUrl: markerIcon,
@@ -18,24 +16,19 @@ const markerIconConfig = new L.Icon({
   shadowSize: [41, 41],
 });
 
-export const EditEventForm = () => {
+export const CreateCompanyCard = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { id } = useParams();
 
-  const { isLoading: eventLoading, event } = useSelector(
-    (state) => state.event
+  const { isLoading: companyLoading, success } = useSelector(
+    (state) => state.company
   );
-  const navigate = useNavigate();
   const [form, setForm] = useState({
-    title: '',
+    name: '',
     description: '',
-    banner: '',
+    logoUrl: '',
     location: '',
-    price: 0,
-    startEvent: '',
-    endEvent: '',
-    maxAttendees: 1,
+    websiteUrl: '',
   });
   const [isMarkerVisible, setMarkerVisible] = useState(false);
   const [map, setMap] = useState({
@@ -45,23 +38,16 @@ export const EditEventForm = () => {
   });
 
   useEffect(() => {
-    setForm({
-      title: event.title,
-      description: event.description,
-      banner: event.banner,
-      location: event.location,
-      price: event.price,
-      startEvent: event.startEvent,
-      endEvent: event.endEvent,
-      maxAttendees: event.maxAttendees,
-    });
-  }, [event]);
-
-  useEffect(() => {
-    if (id) {
-      dispatch(getEvent({ id }));
+    if (success) {
+      setForm({
+        name: '',
+        description: '',
+        logoUrl: '',
+        location: '',
+        websiteUrl: '',
+      });
     }
-  }, [id]);
+  }, [success]);
 
   const handleClick = (e) => {
     const { lat, lng } = e.latlng;
@@ -89,21 +75,14 @@ export const EditEventForm = () => {
     return null;
   };
 
-  const changeHandler = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const changeHandler = (event) => {
+    setForm({ ...form, [event.target.name]: event.target.value });
   };
 
-  const createHandler = (e) => {
-    e.preventDefault();
+  const createHandler = (event) => {
+    event.preventDefault();
     dispatch(
-      updateEvent({
-        _id: event._id,
-        ...form,
-        startEvent: new Date(form.startEvent).toISOString(),
-        endEvent: new Date(
-          form.endEvent || new Date(form.startEvent)
-        ).toISOString(),
-      })
+      createCompany(form)
     );
   };
   return (
@@ -113,7 +92,7 @@ export const EditEventForm = () => {
       <label
         htmlFor='name'
         className='font-semibold text-lg mt-2 self-start my-1'>
-        {t('Title')}:
+        {t('Name')}:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <input
@@ -121,7 +100,7 @@ export const EditEventForm = () => {
           required
           onChange={changeHandler}
           value={form.title}
-          name='title'
+          name='name'
           className='w-full bg-transparent border-0 p-3 focus:border-0 focus:outline-none focus:border-green-400'
           placeholder='title'
         />
@@ -153,7 +132,7 @@ export const EditEventForm = () => {
           required
           onChange={changeHandler}
           value={form.banner}
-          name='banner'
+          name='logoUrl'
           className='w-full bg-transparent border-0 p-3 focus:border-0 focus:outline-none focus:border-green-400'
           placeholder='Enter link to banner'
         />
@@ -177,89 +156,27 @@ export const EditEventForm = () => {
         </MapContainer>
       </div>
       <p>{t('Address')}: {map.address}</p>
-      <div className='flex mx-5 my-2'>
-        <h1 className='text-start text-lg my-2'>
-          {t('Don`t have a company?')}
-        </h1>
-        <button
-          className='p-1 mx-4 px-3 bg-green-600 rounded-md text-white hover:bg-green-700 animate-pulse hover:animate-none'
-          onClick={() => navigate('/companies/create')}>
-          {t('Create company!')}
-        </button>
-      </div>
-      <div className='flex items-center my-3 self-start w-full'>
-        <label
-          htmlFor='start'
-          className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
-          {t('Start at')}:
-        </label>
+      <label
+        htmlFor='name'
+        className='font-semibold text-lg mt-2 self-start my-1'>
+        {t('Website url')}:
+      </label>
+      <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <input
+          type='text'
           required
-          type='datetime-local'
-          name='startEvent'
-          value={form.startEvent}
-          className='w-1/2 ml-1 mr-3 my-2 rounded-sm'
           onChange={changeHandler}
-        />
-      </div>
-      <div className='flex items-center self-start w-full'>
-        <label
-          htmlFor='start'
-          className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
-          {t('End at')}:
-        </label>
-        <input
-          required={!form.allDay}
-          type='datetime-local'
-          name='endEvent'
-          value={form.allDay ? '' : form.endEvent}
-          className='w-1/2 ml-1 mr-3 my-2 rounded-sm'
-          onChange={changeHandler}
-        />
-      </div>
-      <div className='flex items-center self-start w-full'>
-        <label
-          htmlFor='start'
-          className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
-          {t('Price')}:
-        </label>
-        <input
-          type='number'
-          name='price'
-          value={form.price}
-          className='w-1/2 ml-1 mr-3 my-2 rounded-sm'
-          onChange={changeHandler}
-        />
-      </div>
-      <div className='flex items-center self-start w-full'>
-        <label
-          htmlFor='start'
-          className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
-          {t('Max attendees')}:
-        </label>
-        <input
-          type='number'
-          name='maxAttendees'
-          value={form.maxAttendees}
-          className='w-1/2 ml-1 mr-3 my-2 rounded-sm'
-          onChange={changeHandler}
+          value={form.websiteUrl}
+          name='websiteUrl'
+          className='w-full bg-transparent border-0 p-3 focus:border-0 focus:outline-none focus:border-green-400'
+          placeholder='Enter link to banner'
         />
       </div>
       <button
         type='submit'
         className='mt-2 mb-2 w-full text-white rounded-md bg-green-500 p-3 hover:bg-green-600 hover:shadow-md hover:shadow-green-400'
-        disabled={eventLoading}>
-        {t('Confirm editions')}
-      </button>
-      <button
-        type='button'
-        onClick={() => {
-          dispatch(deleteEvent({ id: event._id }));
-          navigate('/home');
-        }}
-        className='mt-2 mb-2 w-full text-white rounded-md bg-red-500 p-3 hover:bg-red-600 hover:shadow-md hover:shadow-green-400'
-        disabled={eventLoading}>
-        {t('Delete event')}
+        disabled={companyLoading}>
+        {t('Create company')}
       </button>
     </form>
   );

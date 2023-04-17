@@ -74,6 +74,10 @@ export const EventPage = () => {
           <img
             src={event.banner}
             alt={event.title}
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null;
+              currentTarget.src = 'https://www.seekpng.com/png/detail/125-1257164_search-event-fiesta-icon-png.png';
+            }}
             className='w-11/12 h-auto lg:mr-4 object-cover rounded-md shadow-xl shadow-green-100'
           />
         </div>
@@ -102,6 +106,10 @@ export const EventPage = () => {
                   className='w-5/12 max-w-xs h-full object-cover rounded-md '
                   src={event.organizer.logoUrl}
                   alt={event.organizer.name}
+                  onError={({ currentTarget }) => {
+                    currentTarget.onerror = null;
+                    currentTarget.src = 'https://www.seekpng.com/png/detail/125-1257164_search-event-fiesta-icon-png.png';
+                  }}
                 />
                 <p className='text-gray-700 px-3 font-semibold text-lg'>
                   {t('by')} {event.organizer.name}
@@ -113,6 +121,15 @@ export const EventPage = () => {
         </div>
         {/* Render buy ticket/sign to event button */}
         <div className='border rounded px-4 py-2 flex flex-col items-center self-center lg:w-3/12 w-full'>
+          {event.organizer && event.organizer.owner === me.id && (
+            <div className='w-full py-5 border-b text-xl'>
+              <button
+                className='border-2 w-1/2 border-gray-500 text-gray-500 hover:text-black hover:border-black px-2 py-1 rounded-md'
+                onClick={() => navigate(`/event/edit/${event._id}`)}>
+                {t('Edit')}
+              </button>
+            </div>
+          )}
           <div className='w-full py-5 border-b text-xl'>
             {t('Price')}: <b>{event.price}₴</b>
           </div>
@@ -124,7 +141,7 @@ export const EventPage = () => {
                 </p>
               ) : (
                 <button
-                  className='bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded'
+                  className='bg-green-500 w-1/2 hover:bg-green-600 text-white px-4 py-2 rounded'
                   onClick={handleBuyTicket}>
                   {event.price ? t('Buy Ticket') : t('Sign to Event')}
                 </button>

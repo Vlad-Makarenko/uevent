@@ -35,6 +35,19 @@ module.exports.getCompanyById = async (id) => {
   return company;
 };
 
+module.exports.getMyCompany = async (id) => {
+  const company = await Company.find().where('owner').equals(id)
+    .populate({
+      path: 'owner',
+      select: 'id fullName avatar'
+    })
+    .populate({
+      path: 'events',
+      select: 'id title banner price description',
+    });
+  return company;
+};
+
 // Update a company by ID
 module.exports.updateCompanyById = async (id, companyData) => {
   const company = await Company.findById(id);

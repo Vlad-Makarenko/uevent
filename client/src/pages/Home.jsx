@@ -61,7 +61,7 @@ export const Home = () => {
   useEffect(() => {
     const allEvents = [...events];
     dispatch(filterEvents({ events: allEvents, filters: localFilter }));
-  }, [localFilter]);
+  }, [localFilter, events]);
 
   if (isLoading) {
     <Loader />;
@@ -135,6 +135,11 @@ export const Home = () => {
             />
           </div>
         </div>
+        <button
+          className='p-1 px-3 mt-3 text-green-500 border-2 border-green-500 lg:hidden rounded-md hover:text-white hover:bg-green-500'
+          onClick={() => navigate('/event/create')}>
+          {t('Create event!')}
+        </button>
       </div>
       <Pagination
         currentPage={currentPage}

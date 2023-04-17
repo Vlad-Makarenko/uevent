@@ -5,6 +5,8 @@ export const updateEventUtil = (events, event) => [
   event,
 ];
 
+export const tagsToSelect = (tags) => tags.map((tag) => ({ value: tag._id, label: tag.name }));
+
 export const eventsToCalendar = (events) => events.map((item) => ({
   ...item,
   start: moment(item.startEvent).toDate(),

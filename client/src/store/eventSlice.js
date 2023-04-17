@@ -48,6 +48,18 @@ export const getAllEvents = createAsyncThunk(
   }
 );
 
+export const getCompanyEvents = createAsyncThunk(
+  'event/getCompanyEvents',
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`${API_URL}/event/company/${id}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const getAllComments = createAsyncThunk(
   'event/getAllComments',
   async ({ id }, { rejectWithValue }) => {
@@ -86,20 +98,9 @@ export const getMyEvents = createAsyncThunk(
 
 export const createEvent = createAsyncThunk(
   'event/createEvent',
-  async (
-    { id, name, type, description, color, startEvent, endEvent, allDay },
-    { rejectWithValue }
-  ) => {
+  async (body, { rejectWithValue }) => {
     try {
-      const response = await api.post(`${API_URL}/event/${id}`, {
-        name,
-        type,
-        description,
-        color,
-        startEvent,
-        endEvent,
-        allDay,
-      });
+      const response = await api.post(`${API_URL}/event`, body);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -145,27 +146,27 @@ export const updateEvent = createAsyncThunk(
   async (
     {
       _id,
-      name,
-      type,
+      title,
       description,
-      color,
+      banner,
+      location,
+      price,
       startEvent,
       endEvent,
-      isPerformed,
-      allDay,
+      maxAttendees,
     },
     { rejectWithValue }
   ) => {
     try {
       const response = await api.patch(`${API_URL}/event/${_id}`, {
-        name,
-        type,
+        title,
         description,
-        color,
+        banner,
+        location,
+        price,
         startEvent,
         endEvent,
-        isPerformed,
-        allDay,
+        maxAttendees,
       });
       return response.data;
     } catch (error) {
@@ -203,7 +204,9 @@ const eventSlice = createSlice({
   initialState: {
     events: [],
     filteredEvents: [],
+    companyEvents: [],
     categories: [],
+    categoriesLoading: false,
     comments: [],
     todayEvents: [],
     event: {
@@ -265,7 +268,12 @@ const eventSlice = createSlice({
   },
   extraReducers: {
     [getTodayEvents.pending]: (state) => {},
-    [getCategories.pending]: (state) => {},
+    [getCategories.pending]: (state) => {
+      state.categoriesLoading = true;
+    },
+    [getCompanyEvents.pending]: (state) => {
+      state.isLoading = true;
+    },
     [getEvent.pending]: (state) => {
       state.isLoading = true;
     },
@@ -291,6 +299,10 @@ const eventSlice = createSlice({
     },
     [getTodayEvents.fulfilled]: (state, action) => {
       state.todayEvents = action.payload;
+      state.isLoading = false;
+    },
+    [getCompanyEvents.fulfilled]: (state, action) => {
+      state.companyEvents = action.payload;
     },
     [subscribeEvent.fulfilled]: (state, action) => {
       state.isLoading = false;
@@ -301,11 +313,11 @@ const eventSlice = createSlice({
     },
     [getEvent.fulfilled]: (state, action) => {
       state.event = action.payload;
-      console.log(state.event);
       state.isLoading = false;
     },
     [getCategories.fulfilled]: (state, action) => {
       state.categories = action.payload;
+      state.categoriesLoading = false;
     },
     [getAllEvents.fulfilled]: (state, action) => {
       state.events = action.payload;
@@ -317,7 +329,6 @@ const eventSlice = createSlice({
       state.isLoading = false;
     },
     [getMyEvents.fulfilled]: (state, action) => {
-      console.log(action.payload);
       state.events = action.payload;
       state.isLoading = false;
     },
@@ -337,14 +348,13 @@ const eventSlice = createSlice({
     },
     [updateEvent.fulfilled]: (state, action) => {
       toast.success('Event has been successfully updated!');
-      state.events = updateEventUtil(state.events, action.payload);
-      state.todayEvents = updateEventUtil(state.todayEvents, action.payload);
       state.isLoading = false;
       state.success = true;
     },
     [deleteEvent.fulfilled]: (state, action) => {
       const id = action.payload;
       state.events = state.events.filter((item) => item._id !== id);
+      toast.success('Event has been successfully deleted!');
       state.isLoading = false;
     },
     [getTodayEvents.rejected]: errorHandler,
@@ -355,6 +365,7 @@ const eventSlice = createSlice({
     },
     [subscribeEvent.rejected]: errorHandler,
     [acceptEventInvite.rejected]: errorHandler,
+    [getCompanyEvents.rejected]: errorHandler,
     [createComment.rejected]: errorHandler,
     [getAllComments.rejected]: errorHandler,
     [getCategories.rejected]: errorHandler,

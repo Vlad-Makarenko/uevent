@@ -8,13 +8,19 @@ export const EventCard = ({ event }) => (
     {/* <div className='max-w-md mx-auto my-4 rounded-lg overflow-hidden shadow-md'> */}
     <img
       className='lg:w-5/12 w-full h-64 object-cover'
+      onError={({ currentTarget }) => {
+        currentTarget.onerror = null;
+        currentTarget.src = 'https://www.seekpng.com/png/detail/125-1257164_search-event-fiesta-icon-png.png';
+      }}
       src={event.banner}
       alt={event.title}
     />
     <div className='flex flex-col lg:w-7/12 px-4 justify-between my-3'>
       <h2 className='text-xl font-bold mb-2 self-start'>{event.title}</h2>
       <p className='text-gray-700 text-sm mb-4 self-start text-left'>
-        {event.description.length > 150 ? `${event.description.slice(0, 150)}...` : event.description}
+        {event.description.length > 150
+          ? `${event.description.slice(0, 150)}...`
+          : event.description}
       </p>
       <p className='text-gray-700 text-sm mb-4  self-start'>
         {formatDate(event.startEvent)}
@@ -23,7 +29,9 @@ export const EventCard = ({ event }) => (
         {event.categories.map((cat, index) => (
           <div
             key={index}
-            className='p-2 rounded-lg mr-1 text-white bg-green-400'>
+            className={`p-2 rounded-lg mr-1 text-white ${
+              cat.name ? 'bg-green-400' : ''
+            }`}>
             {cat.name}
           </div>
         ))}

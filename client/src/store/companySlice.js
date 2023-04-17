@@ -17,6 +17,18 @@ export const getAllCompanies = createAsyncThunk(
   }
 );
 
+export const getMyCompanies = createAsyncThunk(
+  'company/getMyCompanies',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`${API_URL}/company/my`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const getCompany = createAsyncThunk(
   'post/getCompany',
   async ({ id }, { rejectWithValue }) => {
@@ -69,10 +81,11 @@ const companySlice = createSlice({
   name: 'company',
   initialState: {
     companies: [],
+    myCompanies: [],
     company: {},
     error: null,
     isLoading: false,
-    success: false,
+    success: true,
   },
   reducers: {
     setSuccessFalse(state) {
@@ -81,6 +94,9 @@ const companySlice = createSlice({
   },
   extraReducers: {
     [getAllCompanies.pending]: (state) => {
+      state.isLoading = true;
+    },
+    [getMyCompanies.pending]: (state) => {
       state.isLoading = true;
     },
     [getCompany.pending]: (state) => {
@@ -93,7 +109,10 @@ const companySlice = createSlice({
     },
     [getAllCompanies.fulfilled]: (state, action) => {
       state.companies = action.payload;
-      console.log(action.payload);
+      state.isLoading = false;
+    },
+    [getMyCompanies.fulfilled]: (state, action) => {
+      state.myCompanies = action.payload;
       state.isLoading = false;
     },
     [getCompany.fulfilled]: (state, action) => {
@@ -102,7 +121,7 @@ const companySlice = createSlice({
     },
     [createCompany.fulfilled]: (state, action) => {
       toast.success('Company has been successfully created!');
-      state.companies = [...state.Companies, action.payload];
+      // state.companies = [...state.Companies, action.payload];
       state.isLoading = false;
       state.success = true;
     },
@@ -118,6 +137,7 @@ const companySlice = createSlice({
       state.success = true;
     },
     [getAllCompanies.rejected]: errorHandler,
+    [getMyCompanies.rejected]: errorHandler,
     [getCompany.rejected]: errorHandler,
     [createCompany.rejected]: errorHandler,
     [updateCompany.rejected]: errorHandler,
