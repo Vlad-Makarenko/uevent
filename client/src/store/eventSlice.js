@@ -306,7 +306,7 @@ const eventSlice = createSlice({
     },
     [subscribeEvent.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.success = true;
+      // state.success = true;
     },
     [getAllComments.fulfilled]: (state, action) => {
       state.comments = action.payload;

@@ -26,8 +26,8 @@ export const EventPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [commentInp, setCommentInp] = useState('');
   const [simEvent, setSimEvent] = useState([]);
-  const { event, comments, isLoading,
-    success, filteredEvents, events } = useSelector((state) => state.event);
+  const { event, comments, isLoading, success,
+    filteredEvents, events } = useSelector((state) => state.event);
   const { me } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
@@ -54,7 +54,16 @@ export const EventPage = () => {
     if (event.price) {
       dispatch(paymentOn());
     } else {
-      dispatch(subscribeEvent({ id: event._id }));
+      dispatch(
+        subscribeEvent({
+          id: event._id,
+          paymentIntentId: event._id,
+          price: event.price,
+          title: event.title,
+          startEvent: formatDate(event.startEvent),
+          endEvent: formatDate(event.endEvent),
+        })
+      );
     }
   };
   const createCommentHandler = () => {
