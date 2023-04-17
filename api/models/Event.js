@@ -12,6 +12,8 @@ module.exports.eventSchema = new mongoose.Schema(
     },
     banner: {
       type: String, // TODO: add default banner
+      default:
+        'https://www.seekpng.com/png/detail/125-1257164_search-event-fiesta-icon-png.png',
     },
     location: {
       type: String,

@@ -2,17 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css'; // Импорт стилей Leaflet
-import L from 'leaflet'; // Импорт библиотеки Leaflet
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import { useTranslation } from 'react-i18next';
 
-import { createEventOff } from '../../store/modalSlice';
 import {
   createEvent,
   getCategories,
-  setSuccessFalse,
 } from '../../store/eventSlice';
-import { eventTypes, tagsToSelect } from '../../utils/event.utils';
+import { tagsToSelect } from '../../utils/event.utils';
 import markerIcon from '../../assets/google-maps.png';
 import { getMyCompanies } from '../../store/companySlice';
 
@@ -143,7 +141,7 @@ export const CreateEventForm = () => {
       onSubmit={createHandler}
       className='flex flex-col justify-center items-center w-full mb-4'>
       <label htmlFor='name' className='font-semibold text-lg mt-2 self-start my-1'>
-        Title:
+        {t('Title')}:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <input
@@ -157,7 +155,7 @@ export const CreateEventForm = () => {
         />
       </div>
       <label htmlFor='desc' className='font-semibold text-lg mt-2 self-start my-1'>
-        Description:
+        {t('Description')}:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <textarea
@@ -171,7 +169,7 @@ export const CreateEventForm = () => {
         />
       </div>
       <label htmlFor='name' className='font-semibold text-lg mt-2 self-start my-1'>
-        Banner:
+        {t('Banner')}:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <input
@@ -185,7 +183,7 @@ export const CreateEventForm = () => {
         />
       </div>
       <label htmlFor='name' className='font-semibold text-lg mt-2 self-start my-1'>
-        Location:
+        {t('Location')}:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <MapContainer
@@ -200,9 +198,9 @@ export const CreateEventForm = () => {
           <MapEventsHandler />
         </MapContainer>
       </div>
-      <p>Address: {map.address}</p>
+      <p>{t('Address')}: {map.address}</p>
       <label htmlFor='desc' className='font-semibold text-lg mt-2 self-start my-1'>
-        Organizer:
+        {t('Organizer')}:
       </label>
       <div className='flex items-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
       <Select
@@ -226,7 +224,7 @@ export const CreateEventForm = () => {
         </button>
       </div>
       <label htmlFor='desc' className='font-semibold text-lg self-start mt-2 my-1'>
-        Categories:
+        {t('Categories')}:
       </label>
       <div className='flex items-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <Select
@@ -244,7 +242,7 @@ export const CreateEventForm = () => {
       </div>
       <div className='flex items-center my-3 self-start w-full'>
         <label htmlFor='start' className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
-          Start at:
+          {t('Start at')}:
         </label>
         <input
           required
@@ -257,7 +255,7 @@ export const CreateEventForm = () => {
       </div>
       <div className='flex items-center self-start w-full'>
         <label htmlFor='start' className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
-          End at:
+          {t('End at')}:
         </label>
         <input
           required={!form.allDay}
@@ -270,7 +268,7 @@ export const CreateEventForm = () => {
       </div>
       <div className='flex items-center self-start w-full'>
         <label htmlFor='start' className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
-          Price:
+          {t('Price')}:
         </label>
         <input
           type='number'
@@ -282,7 +280,7 @@ export const CreateEventForm = () => {
       </div>
       <div className='flex items-center self-start w-full'>
         <label htmlFor='start' className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
-          Max attendees:
+          {t('Max attendees')}:
         </label>
         <input
           type='number'
@@ -296,7 +294,7 @@ export const CreateEventForm = () => {
         type='submit'
         className='mt-2 mb-2 w-full text-white rounded-md bg-green-500 p-3 hover:bg-green-600 hover:shadow-md hover:shadow-green-400'
         disabled={eventLoading}>
-        Create event
+        {t('Create event')}
       </button>
     </form>
   );

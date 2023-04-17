@@ -15,6 +15,7 @@ import { User } from '../pages/User';
 import { CreateEvent } from '../pages/CreateEvent';
 import { CreateCompany } from '../pages/CreateCompany';
 import { CompanyPage } from '../pages/CompanyPage';
+import { EditEvent } from '../pages/EditEvent';
 
 export const useRoutes = () => {
   const { isAuthenticated, buf } = useSelector((state) => state.auth);
@@ -29,6 +30,7 @@ export const useRoutes = () => {
             <Route path='/user/:id' element={<User />} exact />
             <Route path='/companies' element={<Companies />} exact />
             <Route path='/event/create' element={<CreateEvent />} exact />
+            <Route path='/event/edit/:id' element={<EditEvent />} exact />
             <Route path='/companies/create' element={<CreateCompany />} exact />
             <Route path='/companies/:id' element={<CompanyPage />} exact />
             <Route path='/event/:id' element={<EventPage />} exact />
@@ -47,6 +49,7 @@ export const useRoutes = () => {
             {/* <Route path='/calendar' element={<CalendarPage />} exact /> */}
             <Route path='/companies' element={<Companies />} exact />
             <Route path='/event/create' element={<Navigate to='/auth' replace />} exact />
+            <Route path='/event/edit/:id' element={<Navigate to='/auth' replace />} exact />
             <Route path='/companies/create' element={<Navigate to='/auth' replace />} exact />
             <Route path='/user/:id' element={<User />} exact />
             <Route path='/companies/:id' element={<CompanyPage />} exact />

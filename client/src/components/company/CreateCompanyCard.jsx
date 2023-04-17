@@ -92,7 +92,7 @@ export const CreateCompanyCard = () => {
       <label
         htmlFor='name'
         className='font-semibold text-lg mt-2 self-start my-1'>
-        Name:
+        {t('Name')}:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <input
@@ -108,7 +108,7 @@ export const CreateCompanyCard = () => {
       <label
         htmlFor='desc'
         className='font-semibold text-lg mt-2 self-start my-1'>
-        Description:
+        {t('Description')}:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <textarea
@@ -124,7 +124,7 @@ export const CreateCompanyCard = () => {
       <label
         htmlFor='name'
         className='font-semibold text-lg mt-2 self-start my-1'>
-        Banner:
+        {t('Banner')}:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <input
@@ -140,7 +140,7 @@ export const CreateCompanyCard = () => {
       <label
         htmlFor='name'
         className='font-semibold text-lg mt-2 self-start my-1'>
-        Location:
+        {t('Location')}:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <MapContainer
@@ -155,11 +155,11 @@ export const CreateCompanyCard = () => {
           <MapEventsHandler />
         </MapContainer>
       </div>
-      <p>Address: {map.address}</p>
+      <p>{t('Address')}: {map.address}</p>
       <label
         htmlFor='name'
         className='font-semibold text-lg mt-2 self-start my-1'>
-        Website url:
+        {t('Website url')}:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <input
@@ -176,7 +176,7 @@ export const CreateCompanyCard = () => {
         type='submit'
         className='mt-2 mb-2 w-full text-white rounded-md bg-green-500 p-3 hover:bg-green-600 hover:shadow-md hover:shadow-green-400'
         disabled={companyLoading}>
-        Create company
+        {t('Create company')}
       </button>
     </form>
   );

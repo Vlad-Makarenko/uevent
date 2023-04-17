@@ -20,16 +20,15 @@ const createEvent = async (companyId, event) => {
   return createdEvent;
 };
 
-const updateEvent = async (
-  authorId,
-  eventId,
-  eventData
-) => {
-  const event = await Event.findById(eventId);
+const updateEvent = async (authorId, eventId, eventData) => {
+  const event = await Event.findById(eventId).populate({
+    path: 'organizer',
+    select: 'owner',
+  });
   if (!event) {
     throw ApiError.BadRequestError('no such event found');
   }
-  if (event.author.toString() !== authorId) {
+  if (event.organizer.owner.toString() !== authorId) {
     throw ApiError.ForbiddenError();
   }
   Object.assign(event, eventData);
@@ -46,8 +45,10 @@ const getAllCompanyEvents = async (companyId) => {
 };
 
 const getMyEvents = async (userId) => {
-  const events = await Event.find({ attendees: userId })
-    .populate({ path: 'categories', select: 'id name' });
+  const events = await Event.find({ attendees: userId }).populate({
+    path: 'categories',
+    select: 'id name',
+  });
   return events;
 };
 
@@ -104,7 +105,7 @@ const getEventById = async (id) => {
     })
     .populate({
       path: 'organizer',
-      select: 'id name logoUrl',
+      select: 'id name logoUrl owner',
     });
   if (!event) {
     return null;
@@ -121,7 +122,9 @@ const subscribeEvent = async (userId, eventId) => {
     throw ApiError.BadRequestError('You have already subscribed this event');
   }
   if (candidate.attendees.length === candidate.maxAttendees) {
-    throw ApiError.BadRequestError('There are no available seats for this event');
+    throw ApiError.BadRequestError(
+      'There are no available seats for this event'
+    );
   }
   const event = await Event.findByIdAndUpdate(
     eventId,
@@ -162,11 +165,14 @@ const unsubscribeEvent = async (userId, eventId) => {
 };
 
 const deleteEvent = async (userId, eventId) => {
-  const event = await Event.findById(eventId);
+  const event = await Event.findById(eventId).populate({
+    path: 'organizer',
+    select: 'owner',
+  });
   if (!event) {
     throw ApiError.BadRequestError('Event does not exist');
   }
-  if (event.author.toString() !== userId) {
+  if (event.organizer.owner.toString() !== userId) {
     throw ApiError.ForbiddenError();
   }
   event.delete();

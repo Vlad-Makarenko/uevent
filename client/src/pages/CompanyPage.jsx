@@ -38,6 +38,10 @@ export const CompanyPage = () => {
           <img
             src={company.logoUrl}
             alt={company.name}
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null;
+              currentTarget.src = 'https://www.seekpng.com/png/detail/125-1257164_search-event-fiesta-icon-png.png';
+            }}
             className='w-11/12 h-auto lg:mr-4 object-cover rounded-md shadow-xl shadow-green-100'
           />
         </div>
@@ -49,7 +53,7 @@ export const CompanyPage = () => {
             <div className='flex w-full lg:h-1/3 my-3 items-center'>
               <div className='flex flex-col items-center h-full justify-center border-r border-gray-300 w-1/2'>
                 <h3 className='lg:text-lg text-lg'>
-                  Founded:
+                  {t('Founded')}:
                 </h3>
                 <h3 className='lg:text-3xl text-xl font-bold'>
                   {formatDate(company.founded)}

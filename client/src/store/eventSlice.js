@@ -139,27 +139,27 @@ export const updateEvent = createAsyncThunk(
   async (
     {
       _id,
-      name,
-      type,
+      title,
       description,
-      color,
+      banner,
+      location,
+      price,
       startEvent,
       endEvent,
-      isPerformed,
-      allDay,
+      maxAttendees,
     },
     { rejectWithValue }
   ) => {
     try {
       const response = await api.patch(`${API_URL}/event/${_id}`, {
-        name,
-        type,
+        title,
         description,
-        color,
+        banner,
+        location,
+        price,
         startEvent,
         endEvent,
-        isPerformed,
-        allDay,
+        maxAttendees,
       });
       return response.data;
     } catch (error) {
@@ -322,7 +322,6 @@ const eventSlice = createSlice({
       state.isLoading = false;
     },
     [getMyEvents.fulfilled]: (state, action) => {
-      console.log(action.payload);
       state.events = action.payload;
       state.isLoading = false;
     },
@@ -342,14 +341,13 @@ const eventSlice = createSlice({
     },
     [updateEvent.fulfilled]: (state, action) => {
       toast.success('Event has been successfully updated!');
-      state.events = updateEventUtil(state.events, action.payload);
-      state.todayEvents = updateEventUtil(state.todayEvents, action.payload);
       state.isLoading = false;
       state.success = true;
     },
     [deleteEvent.fulfilled]: (state, action) => {
       const id = action.payload;
       state.events = state.events.filter((item) => item._id !== id);
+      toast.success('Event has been successfully deleted!');
       state.isLoading = false;
     },
     [getTodayEvents.rejected]: errorHandler,

@@ -61,7 +61,7 @@ export const Home = () => {
   useEffect(() => {
     const allEvents = [...events];
     dispatch(filterEvents({ events: allEvents, filters: localFilter }));
-  }, [localFilter]);
+  }, [localFilter, events]);
 
   if (isLoading) {
     <Loader />;

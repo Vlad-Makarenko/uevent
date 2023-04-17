@@ -8,6 +8,10 @@ export const EventCard = ({ event }) => (
     {/* <div className='max-w-md mx-auto my-4 rounded-lg overflow-hidden shadow-md'> */}
     <img
       className='lg:w-5/12 w-full h-64 object-cover'
+      onError={({ currentTarget }) => {
+        currentTarget.onerror = null;
+        currentTarget.src = 'https://www.seekpng.com/png/detail/125-1257164_search-event-fiesta-icon-png.png';
+      }}
       src={event.banner}
       alt={event.title}
     />
