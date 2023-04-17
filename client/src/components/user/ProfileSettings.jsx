@@ -86,7 +86,7 @@ export const ProfileSettings = () => {
         />
       </div>
       <label htmlFor='login' className='self-start py-2'>
-        Login:
+        Full name:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <BsFillPersonFill color='green' className='mx-3' />
@@ -94,23 +94,8 @@ export const ProfileSettings = () => {
           required
           type='text'
           onChange={changeHandler}
-          value={form.login}
-          name='login'
-          className='w-full bg-transparent border-0 p-3 focus:border-0 focus:outline-none focus:border-green-400'
-          placeholder='Login'
-        />
-      </div>
-      <label htmlFor='FullName' className='self-start py-2'>
-        Full name:
-      </label>
-      <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
-        <MdLabel color='green' className='mx-3' />
-        <input
-          required
-          type='text'
-          onChange={changeHandler}
           value={form.fullName}
-          name='fullName'
+          name='login'
           className='w-full bg-transparent border-0 p-3 focus:border-0 focus:outline-none focus:border-green-400'
           placeholder='Full name'
         />

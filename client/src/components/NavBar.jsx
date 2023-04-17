@@ -47,18 +47,17 @@ export const NavBar = () => {
 
   return (
     <Navbar rounded={true} className='border-b shadow-md shadow-green-200'>
-      <Navbar.Brand onClick={() => navigate('/')}>
+      <Navbar.Brand >
         <img
+          onClick={() => navigate('/')}
           src={logoImg}
           className='mr-3 h-6 sm:h-9 cursor-pointer'
           alt='uevent Logo'
         />
-        <span className='self-center whitespace-nowrap text-xl font-semibold dark:text-white cursor-pointer'>
+        <span onClick={() => navigate('/')} className='self-center whitespace-nowrap text-xl font-semibold dark:text-white cursor-pointer'>
           Eventify
         </span>
-      </Navbar.Brand>
-      <div className='flex items-center md:order-2'>
-        <div className='lg:mx-4'>
+        <div className='mx-4 flex items-center'>
           {i18n.language === 'uk' ? (
             <button onClick={() => changeLanguage('en')}>
               <img src={enFlag} alt='English' width='35' />
@@ -69,9 +68,16 @@ export const NavBar = () => {
             </button>
           )}
         </div>
-        <div className='mx-4'>
+        <div className='mx-1 flex items-center'>
           <Switch checked={isDark} onChange={toggle} styling='github' />
         </div>
+      </Navbar.Brand>
+      <div className='flex items-center md:order-2'>
+        <button
+          className='p-1 px-3 mx-3 text-green-500 border-2 border-green-500 hidden lg:block rounded-md hover:text-white hover:bg-green-500'
+          onClick={() => navigate('/event/create')}>
+          {t('Create event!')}
+        </button>
         {isAuthenticated ? (
           <Dropdown
             arrowIcon={false}
@@ -103,7 +109,7 @@ export const NavBar = () => {
           </Dropdown>
         ) : (
           <button
-            className='p-1 px-3 bg-green-600 rounded-md text-white hover:bg-green-700 animate-pulse hover:animate-none'
+            className='p-1 px-3 bg-green-600 rounded-md border-2 border-green-500 text-white hover:bg-green-500 animate-pulse hover:animate-none'
             onClick={() => navigate('/auth')}>
             {t('Get Started!')}
           </button>

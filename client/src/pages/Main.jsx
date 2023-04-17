@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BiCopyright } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import logoImg from '../assets/logo.png';
 
 export const Main = () => {
   const navigate = useNavigate();
+  useEffect(() => navigate('/home'), []);
   return (
     <div className='container mx-auto flex flex-col justify-center my-10'>
       <div className='flex justify-center'>

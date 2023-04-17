@@ -5,6 +5,7 @@ import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 
 import invert from 'invert-color';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   eventDateUpdate,
   eventsToCalendar,
@@ -23,6 +24,7 @@ const DnDCalendar = withDragAndDrop(Calendar);
 export const BigCalendar = ({ events }) => {
   const message = useMessage();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { views } = useMemo(() => ({
     views: { month: true, day: true, week: true },
@@ -39,14 +41,6 @@ export const BigCalendar = ({ events }) => {
       style: { backgroundColor: event.color, color: invert(event.color, true) },
     }),
   }));
-
-  const onEventResize = (data) => {
-    if (data.event.type === 'holiday') {
-      return message('You can\'t change holiday', 'warning');
-    }
-    dispatch(updateEvent(getEditEventDate(data)));
-    setDisplayEvents(eventDateUpdate(displayEvents, data));
-  };
 
   const onEventDrop = (data) => {
     if (data.event.type === 'holiday') {
@@ -65,18 +59,8 @@ export const BigCalendar = ({ events }) => {
       events={displayEvents}
       localizer={localizer}
       onEventDrop={onEventDrop}
-      // onEventResize={onEventResize}
-      // onSelectSlot={() => {
-      //   if (
-      //     currentCalendar.participants.some((itm) => itm._id === me.id)
-      //     || currentCalendar.author._id === me.id
-      //   ) {
-      //     dispatch(createEventOn());
-      //   }
-      // }}
       onSelectEvent={(slotInfo) => {
-        dispatch(getEvent({ id: slotInfo._id }));
-        dispatch(infoEventOn());
+        navigate(`/event/${slotInfo._id}`);
       }}
       resizable
       selectable

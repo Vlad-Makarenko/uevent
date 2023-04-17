@@ -18,7 +18,7 @@ export const ProfileCard = ({ user }) => (
         </Tooltip>
       </div>
       <div className='w-10/12 flex h-full items-center justify-start'>
-        {user.login}
+        {user.fullName}
       </div>
     </div>
     <div className='flex border-t w-11/12  mx-3 my-2 border-t-green-400  p-2 px-4 hover:bg-gradient-to-br from-green-100 animate-appear'>
@@ -38,7 +38,7 @@ export const ProfileCard = ({ user }) => (
         </Tooltip>
       </div>
       <div className='w-10/12 flex h-full items-center justify-start'>
-        {user.fullName}
+        {user.events ? user.events.length : ''} event(s) subscribed
       </div>
     </div>
     <div className='flex border-t w-11/12  mx-3 my-2 border-t-green-400  p-2 px-4 hover:bg-gradient-to-br from-green-100 animate-appear'>

@@ -12,6 +12,9 @@ import { Auth } from '../pages/Auth';
 import { TestMapPage } from '../pages/testMapPage';
 import { CheckLogin } from '../components/CheckLogin';
 import { User } from '../pages/User';
+import { CreateEvent } from '../pages/CreateEvent';
+import { CreateCompany } from '../pages/CreateCompany';
+import { CompanyPage } from '../pages/CompanyPage';
 
 export const useRoutes = () => {
   const { isAuthenticated, buf } = useSelector((state) => state.auth);
@@ -25,6 +28,9 @@ export const useRoutes = () => {
             <Route path='/calendar' element={<CalendarPage />} exact />
             <Route path='/user/:id' element={<User />} exact />
             <Route path='/companies' element={<Companies />} exact />
+            <Route path='/event/create' element={<CreateEvent />} exact />
+            <Route path='/companies/create' element={<CreateCompany />} exact />
+            <Route path='/companies/:id' element={<CompanyPage />} exact />
             <Route path='/event/:id' element={<EventPage />} exact />
             <Route path='/testMap' element={<TestMapPage />} exact />
             <Route
@@ -39,9 +45,12 @@ export const useRoutes = () => {
             <Route path='/' element={<Main />} exact />
             <Route path='/home' element={<Home />} exact />
             {/* <Route path='/calendar' element={<CalendarPage />} exact /> */}
-            <Route path='/user/:id' element={<User />} exact />
             <Route path='/companies' element={<Companies />} exact />
-            <Route path='/eventPage' element={<EventPage />} exact />
+            <Route path='/event/create' element={<Navigate to='/auth' replace />} exact />
+            <Route path='/companies/create' element={<Navigate to='/auth' replace />} exact />
+            <Route path='/user/:id' element={<User />} exact />
+            <Route path='/companies/:id' element={<CompanyPage />} exact />
+            <Route path='/event/:id' element={<EventPage />} exact />
             <Route path='/auth' element={<Auth />} exact />
             <Route
               path='/password-reset/:token'

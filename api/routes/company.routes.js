@@ -6,6 +6,7 @@ const authMiddleware = require('../middlewares/auth.middleware');
 const router = new Router();
 
 router.get('/', companyController.getAllCompanies);
+router.get('/my', authMiddleware, companyController.getMyCompany);
 router.get('/:id', companyController.getCompanyById);
 // router.get('/acceptInvite/:key', authMiddleware, companyController.acceptInvite);
 router.post(

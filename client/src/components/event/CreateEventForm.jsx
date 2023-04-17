@@ -1,61 +1,129 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css'; // Импорт стилей Leaflet
+import L from 'leaflet'; // Импорт библиотеки Leaflet
+import { useTranslation } from 'react-i18next';
 
 import { createEventOff } from '../../store/modalSlice';
-import { createEvent, setSuccessFalse } from '../../store/eventSlice';
-import { eventTypes } from '../../utils/event.utils';
+import {
+  createEvent,
+  getCategories,
+  setSuccessFalse,
+} from '../../store/eventSlice';
+import { eventTypes, tagsToSelect } from '../../utils/event.utils';
+import markerIcon from '../../assets/google-maps.png';
+import { getMyCompanies } from '../../store/companySlice';
+
+const markerIconConfig = new L.Icon({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon,
+  iconSize: [30, 30],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
 
 export const CreateEventForm = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
-  // const { currentCalendar } = useSelector((state) => state.calendar);
-  const { isLoading, success } = useSelector((state) => state.event);
+  const {
+    isLoading: eventLoading,
+    success,
+    categoriesLoading,
+    categories,
+  } = useSelector((state) => state.event);
+  const { isLoading: companyLoading, myCompanies } = useSelector(
+    (state) => state.company
+  );
   const [form, setForm] = useState({
-    name: '',
+    title: '',
     description: '',
-    type: 'task',
-    color: '#19c836',
-    allDay: false,
+    banner: '',
+    location: '',
+    price: 0,
     startEvent: '',
     endEvent: '',
+    categories: [],
+    organizer: '',
+    maxAttendees: 1,
+  });
+  const [isMarkerVisible, setMarkerVisible] = useState(false);
+  const [tagOptions, setTagOptions] = useState([]);
+  const [compOptions, setCompOptions] = useState([]);
+  const [map, setMap] = useState({
+    lat: 50,
+    lng: 30,
+    address: '',
   });
 
   useEffect(() => {
-    setForm({
-      ...form,
-      color:
-        // eslint-disable-next-line no-nested-ternary
-        form.type === 'reminder'
-          ? '#FFA500'
-          : form.type === 'arrangement'
-            ? '#0000FF'
-            : '#008000',
-    });
-  }, [form.type]);
+    dispatch(getCategories());
+    dispatch(getMyCompanies());
+  }, []);
 
   useEffect(() => {
     if (success) {
       setForm({
-        name: '',
+        title: '',
         description: '',
-        type: 'task',
-        color: '#19c836',
-        allDay: false,
+        banner: '',
+        location: '',
+        price: 0,
         startEvent: '',
         endEvent: '',
+        categories: [],
+        organizer: '',
+        maxAttendees: 1,
       });
-      dispatch(createEventOff());
-      dispatch(setSuccessFalse());
     }
   }, [success]);
 
+  const tagChange = (option) => {
+    const titleArr = option.map((opt) => opt.value);
+    setForm({ ...form, categories: titleArr });
+  };
+  const compChange = (option) => {
+    setForm({ ...form, organizer: option.value });
+  };
+
+  useEffect(() => {
+    setTagOptions(tagsToSelect(categories));
+  }, [categoriesLoading]);
+  useEffect(() => {
+    setCompOptions(tagsToSelect(myCompanies));
+  }, [categoriesLoading]);
+
+  const handleClick = (e) => {
+    const { lat, lng } = e.latlng;
+    fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        const temp = {
+          latitude: lat,
+          longitude: lng,
+          address: data.display_name,
+        };
+        setMap({ lat, lng, address: data.display_name });
+        setForm({ ...form, location: JSON.stringify(temp) });
+      })
+      .catch((error) => console.error(error));
+    setMarkerVisible(true);
+  };
+
+  const MapEventsHandler = () => {
+    useMapEvents({
+      click: handleClick,
+    });
+    return null;
+  };
+
   const changeHandler = (event) => {
-    if (event.target.name === 'allDay') {
-      setForm({ ...form, [event.target.name]: !form.allDay });
-    } else {
-      setForm({ ...form, [event.target.name]: event.target.value });
-    }
+    setForm({ ...form, [event.target.name]: event.target.value });
   };
 
   const createHandler = (event) => {
@@ -63,7 +131,6 @@ export const CreateEventForm = () => {
     dispatch(
       createEvent({
         ...form,
-        // id: currentCalendar._id,
         startEvent: new Date(form.startEvent).toISOString(),
         endEvent: new Date(
           form.endEvent || new Date(form.startEvent)
@@ -75,21 +142,21 @@ export const CreateEventForm = () => {
     <form
       onSubmit={createHandler}
       className='flex flex-col justify-center items-center w-full mb-4'>
-      <label htmlFor='name' className='self-start my-1'>
-        Name:
+      <label htmlFor='name' className='font-semibold text-lg mt-2 self-start my-1'>
+        Title:
       </label>
-      <div className='flex tems-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
+      <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <input
           type='text'
           required
           onChange={changeHandler}
-          value={form.name}
-          name='name'
+          value={form.title}
+          name='title'
           className='w-full bg-transparent border-0 p-3 focus:border-0 focus:outline-none focus:border-green-400'
-          placeholder='Name'
+          placeholder='title'
         />
       </div>
-      <label htmlFor='desc' className='self-start my-1'>
+      <label htmlFor='desc' className='font-semibold text-lg mt-2 self-start my-1'>
         Description:
       </label>
       <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
@@ -103,37 +170,80 @@ export const CreateEventForm = () => {
           placeholder='Description'
         />
       </div>
-      <label htmlFor='desc' className='self-start my-1'>
-        Type:
+      <label htmlFor='name' className='font-semibold text-lg mt-2 self-start my-1'>
+        Banner:
+      </label>
+      <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
+        <input
+          type='text'
+          required
+          onChange={changeHandler}
+          value={form.banner}
+          name='banner'
+          className='w-full bg-transparent border-0 p-3 focus:border-0 focus:outline-none focus:border-green-400'
+          placeholder='Enter link to banner'
+        />
+      </div>
+      <label htmlFor='name' className='font-semibold text-lg mt-2 self-start my-1'>
+        Location:
+      </label>
+      <div className='flex items-center justify-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
+        <MapContainer
+          center={[map.lat, map.lng]}
+          zoom={6}
+          style={{ height: '320px', width: '100%' }}
+          className='cursor-pointer'>
+          <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
+          {isMarkerVisible && (
+            <Marker position={[map.lat, map.lng]} icon={markerIconConfig} />
+          )}
+          <MapEventsHandler />
+        </MapContainer>
+      </div>
+      <p>Address: {map.address}</p>
+      <label htmlFor='desc' className='font-semibold text-lg mt-2 self-start my-1'>
+        Organizer:
+      </label>
+      <div className='flex items-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
+      <Select
+          className='w-full basic-single p-0 m-0'
+          classNamePrefix='select'
+          isLoading={companyLoading}
+          isClearable
+          isSearchable
+          name='organizer'
+          options={compOptions}
+          onChange={compChange}
+          placeholder='Start typing to see suggestions.'
+        />
+      </div>
+      <div className='flex mx-5 my-2'>
+        <h1 className='text-start text-lg my-2'>{t('Don`t have a company?')}</h1>
+        <button
+          className='p-1 mx-4 px-3 bg-green-600 rounded-md text-white hover:bg-green-700 animate-pulse hover:animate-none'
+          onClick={() => navigate('/companies/create')}>
+          {t('Create company!')}
+        </button>
+      </div>
+      <label htmlFor='desc' className='font-semibold text-lg self-start mt-2 my-1'>
+        Categories:
       </label>
       <div className='flex items-center w-full border border-green-500 rounded-md hover:shadow-md hover:shadow-green-400'>
         <Select
-          className='w-full'
+          className='w-full basic-single p-0 m-0'
           classNamePrefix='select'
+          isLoading={categoriesLoading}
           isClearable
           isSearchable
-          name='type'
-          onChange={(option) => setForm({ ...form, type: option.value })}
-          placeholder='Select event type'
-          options={eventTypes}
-          defaultValue={eventTypes[0]}
+          isMulti
+          name='categories'
+          options={tagOptions}
+          onChange={tagChange}
+          placeholder='Start typing to see suggestions.'
         />
       </div>
-      <div className='flex items-center justify-center self-start'>
-        <input
-          id='allDay'
-          type='checkbox'
-          onChange={changeHandler}
-          checked={form.allDay}
-          name='allDay'
-          className='ml-1 mr-3 my-2 rounded-sm'
-        />
-        <label htmlFor='allDay' className='cursor-pointer'>
-          make this event an all day event
-        </label>
-      </div>
-      <div className='flex items-center self-start w-full'>
-        <label htmlFor='start' className='text-xl mr-3 w-1/4 lg:w-1/6'>
+      <div className='flex items-center my-3 self-start w-full'>
+        <label htmlFor='start' className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
           Start at:
         </label>
         <input
@@ -146,7 +256,7 @@ export const CreateEventForm = () => {
         />
       </div>
       <div className='flex items-center self-start w-full'>
-        <label htmlFor='start' className='text-xl mr-3 w-1/4 lg:w-1/6'>
+        <label htmlFor='start' className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
           End at:
         </label>
         <input
@@ -159,13 +269,25 @@ export const CreateEventForm = () => {
         />
       </div>
       <div className='flex items-center self-start w-full'>
-        <label htmlFor='start' className='text-xl mr-3 w-1/4 lg:w-1/6'>
-          Color:
+        <label htmlFor='start' className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
+          Price:
         </label>
         <input
-          type='color'
-          name='color'
-          value={form.color}
+          type='number'
+          name='price'
+          value={form.price}
+          className='w-1/2 ml-1 mr-3 my-2 rounded-sm'
+          onChange={changeHandler}
+        />
+      </div>
+      <div className='flex items-center self-start w-full'>
+        <label htmlFor='start' className='font-semibold text-lg mr-3 w-1/4 lg:w-1/6'>
+          Max attendees:
+        </label>
+        <input
+          type='number'
+          name='maxAttendees'
+          value={form.maxAttendees}
           className='w-1/2 ml-1 mr-3 my-2 rounded-sm'
           onChange={changeHandler}
         />
@@ -173,7 +295,7 @@ export const CreateEventForm = () => {
       <button
         type='submit'
         className='mt-2 mb-2 w-full text-white rounded-md bg-green-500 p-3 hover:bg-green-600 hover:shadow-md hover:shadow-green-400'
-        disabled={isLoading}>
+        disabled={eventLoading}>
         Create event
       </button>
     </form>
