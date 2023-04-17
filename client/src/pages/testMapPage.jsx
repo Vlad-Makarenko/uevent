@@ -5,6 +5,7 @@ import L from 'leaflet'; // Импорт библиотеки Leaflet
 
 // Импорт изображения маркера
 import markerIcon from '../assets/google-maps.png';
+import PaymentModal from '../components/PaymentModal';
 
 // Конфигурация маркера
 const markerIconConfig = new L.Icon({
@@ -58,6 +59,7 @@ export const TestMapPage = () => {
   return (
     <div className='flex bg-white rounded-lg shadow-lg'>
       <div className='flex flex-col flex-grow p-4 justify-between'>
+        <PaymentModal></PaymentModal>
         <h2 className='text-xl font-bold text-left'>{eventOne.title}</h2>
         <MapContainer
           center={[eventOne.latitude, eventOne.longtitude]}
