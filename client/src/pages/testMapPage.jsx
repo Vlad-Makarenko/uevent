@@ -43,7 +43,16 @@ export const TestMapPage = () => {
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
     )
       .then((response) => response.json())
-      .then((data) => setAddress(data.display_name))
+      .then((data) => {
+        setAddress(data.display_name);
+        const temp = {
+          latitude: lat,
+          longitude: lng,
+          address: data.display_name,
+        };
+        console.log(JSON.stringify(temp));
+        console.log(JSON.parse(JSON.stringify(temp)));
+      })
       .catch((error) => console.error(error));
     setMarkerVisible(true); // Показываем маркер при клике на карту
   };

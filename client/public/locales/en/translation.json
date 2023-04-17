@@ -45,6 +45,20 @@
   "Already have an account?": "Already have an account?",
   "Don`t have a company?": "Don`t have a company?",
   "Create company!": "Create company!",
-  
+  "Expired": "Expired",
+  "by": "by",
+  "Price": "Price",
+  "Subscribed": "Subscribed",
+  "Buy Ticket": "Buy Ticket",
+  "Sign to Event": "Sign to Event",
+  "Participants": "Participants",
+  "Description": "Description",
+  "Comments": "Comments",
+  "Send": "Send",
+  "Similar events": "Similar events",
+  "d": "d",
+  "h": "h",
+  "m": "m",
+  "s": "s",
   "" : ""
 }

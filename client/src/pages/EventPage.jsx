@@ -1,89 +1,131 @@
+/* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import L from 'leaflet'; // Импорт библиотеки Leaflet
+import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Timer from '../components/Timer';
-import 'leaflet/dist/leaflet.css'; // Импорт стилей Leaflet
-// import { Loader } from '../components/Loader';
-
-// Импорт изображения маркера
-import markerIcon from '../assets/google-maps.png';
-
-// Конфигурация маркера
-const markerIconConfig = new L.Icon({
-  iconUrl: markerIcon,
-  iconRetinaUrl: markerIcon,
-  iconSize: [30, 30],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+import { Loader } from '../components/Loader';
+import {
+  createComment,
+  getAllComments,
+  getAllEvents,
+  getEvent,
+  setSuccessFalse,
+} from '../store/eventSlice';
+import { Map } from '../components/Map';
+import { formatDate } from '../utils/date.utils';
+import { CommentCard } from '../components/event/CommentCard';
+import { EventCard } from '../components/event/EventCard';
 
 export const EventPage = () => {
   const dispatch = useDispatch();
+  const { id } = useParams();
+  const { t } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [commentInp, setCommentInp] = useState('');
+  const [simEvent, setSimEvent] = useState([]);
+  const { event, comments, isLoading,
+    success, filteredEvents, events } = useSelector((state) => state.event);
+  const { me } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(getAllEvents());
+    if (id) {
+      dispatch(getEvent({ id }));
+      dispatch(getAllComments({ id }));
+    }
+    dispatch(setSuccessFalse());
+  }, [id]);
+
+  useEffect(() => {
+    if (filteredEvents.length) {
+      const temp = [...filteredEvents];
+      setSimEvent(temp.filter((ev) => event._id !== ev._id).slice(0, 2));
+    } else {
+      const temp = [...events];
+      setSimEvent(temp.filter((ev) => event._id !== ev._id).slice(0, 2));
+    }
+  }, [event, events, filteredEvents]);
+
   const handleBuyTicket = () => {};
+  const createCommentHandler = () => {
+    dispatch(createComment({ id, body: commentInp }));
+  };
   const handleOpenDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-  const event = {
-    title: 'Премьера "Драйв"',
-    memberCount: 15,
-    imageUrl:
-      'https://i.pinimg.com/550x/e1/a5/ab/e1a5ab6837ae411f48a3c436c771e35f.jpg',
-    price: '100$',
-    latitude: 47.83393628153078,
-    longtitude: 32.82901672846842,
-    adress:
-      '187, Миру вулиця, Казанка, Казанківська селищна громада, Баштанський район, Миколаївська область, 56000, Україна',
-    date: '2023-07-15',
-  };
+
+  if (isLoading || success) {
+    return <Loader />;
+  }
   return (
     <div className='container mx-auto '>
-      <div className='flex my-4 justify-between '>
-        {/* Render event image */}
-        <div className='flex w-3/12'>
-          <img src={event.imageUrl} alt={event.title} className='h-auto mr-4' />
+      <div className='flex flex-col lg:flex-row my-4 lg:justify-between '>
+        <div className='flex lg:w-3/12 w-full justify-center'>
+          <img
+            src={event.banner}
+            alt={event.title}
+            className='w-11/12 h-auto lg:mr-4 object-cover rounded-md shadow-xl shadow-green-100'
+          />
         </div>
-        {/* Render event title */}
-        <div className='flex bg-white w-6/12'>
-          {/* Остальной код */}
-          <div className='flex flex-col flex-grow p-4 '>
-            <h2 className='text-5xl font-bold text-left'>{event.title}</h2>
-            <div className='flex w-full h-1/3 items-center'>
-              {/* Блок с надписью1 */}
-              <div className='flex flex-col items-center justify-center border-r border-gray-300 w-1/2 h-5/6'>
-                <h3 className='text-3xl font-bold'>{event.date}</h3>
-                <Timer endDate='2023-05-01T00:00:00' />
+        <div className='flex bg-white lg:w-6/12 w-full'>
+          <div className='flex flex-col flex-grow p-4'>
+            <h2 className='lg:text-5xl text-2xl font-bold lg:text-left'>
+              {event.title}
+            </h2>
+            <div className='flex w-full lg:h-1/3 my-3 items-center'>
+              <div className='flex flex-col items-center justify-center border-r border-gray-300 w-1/2'>
+                <h3 className='lg:text-3xl text-xl font-bold'>
+                  {formatDate(event.startEvent)}
+                </h3>
+                {new Date() < new Date(event.startEvent) ? (
+                  <Timer endDate={event.startEvent} />
+                ) : (
+                  <p className='text-red-500 text-xl border border-red-500 rounded-md px-1'>
+                    {t('Expired')}
+                  </p>
+                )}
               </div>
-              {/* Блок с надписью2 */}
-              <div className='flex flex-grow items-center justify-center h-5/6'>
-                <p className='text-center'>Надпись2</p>
+              <div
+                onClick={() => navigate(`/company/${event.organizer._id}`)}
+                className='flex mx-3 w-1/2 cursor-pointer items-center justify-center hover:shadow-md h-full rounded-md overflow-hidden'>
+                <img
+                  className='w-5/12 max-w-xs h-full object-cover rounded-md '
+                  src={event.organizer.logoUrl}
+                  alt={event.organizer.name}
+                />
+                <p className='text-gray-700 px-3 font-semibold text-lg'>
+                  {t('by')} {event.organizer.name}
+                </p>
               </div>
             </div>
-            {/* Компонент с картой */}
-            <MapContainer
-              center={[event.latitude, event.longtitude]}
-              zoom={16}
-              style={{ height: '60%', width: '100%' }}>
-              <TileLayer url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' />
-              <Marker
-                position={[event.latitude, event.longtitude]}
-                icon={markerIconConfig}
-              />
-            </MapContainer>
-            <p>{event.adress}</p>
+            <Map location={JSON.parse(event.location)} />
           </div>
         </div>
         {/* Render buy ticket/sign to event button */}
-        <div className='border rounded px-4 py-2  flex flex-col items-center self-center w-3/12'>
-          <div className='w-full py-5 border-b'>Price: {event.price}</div>
+        <div className='border rounded px-4 py-2 flex flex-col items-center self-center lg:w-3/12 w-full'>
+          <div className='w-full py-5 border-b text-xl'>
+            {t('Price')}: <b>{event.price}₴</b>
+          </div>
           <div className='w-full border-b py-5'>
-            <button
-              className='bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded'
-              onClick={handleBuyTicket}>
-              Buy Ticket/Sign to Event
-            </button>
+            {new Date() < new Date(event.startEvent) ? (
+              event.attendees.some((att) => att._id === me.id) ? (
+                <p className='text-green-500 text-xl border border-green-500 rounded-md p-2'>
+                  {t('Subscribed')}
+                </p>
+              ) : (
+                <button
+                  className='bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded'
+                  onClick={handleBuyTicket}>
+                  {event.price ? t('Buy Ticket') : t('Sign to Event')}
+                </button>
+              )
+            ) : (
+              <p className='text-red-500 text-xl border border-red-500 rounded-md p-2'>
+                {t('Expired')}
+              </p>
+            )}
           </div>
           <div className='flex-grow w-full py-5'>
             {/* Render member count */}
@@ -105,89 +147,83 @@ export const EventPage = () => {
                   </svg>
                 </button>
                 {isDropdownOpen && (
-                  <ul className='absolute left-0 mt-2 bg-gray-200 p-4 rounded max-h-40 overflow-y-auto overflow-x-hidden'>
-                    {/* Dropdown list content */}
-                    <li className='w-24'>Option 1</li>
-                    <li className='w-200'>Option 2</li>
-                    <li className='w-200'>Option 3</li>
-                    <li className='w-200'>Option 1</li>
-                    <li className='w-24'>Option 1</li>
-                    <li className='w-200'>Option 2</li>
-                    <li className='w-200'>Option 3</li>
-                    <li className='w-200'>Option 1</li>
-                    <li className='w-24'>Option 1</li>
-                    <li className='w-200'>Option 2</li>
-                    <li className='w-200'>Option 3</li>
-                    <li className='w-200'>Option 1</li>
+                  <ul className='absolute left-0 mt-2 border bg-white p-1 rounded max-h-40 overflow-y-auto overflow-x-auto'>
+                    {event.attendees.map((att, index) => (
+                      <li className='w-52 border-b-2' key={index}>
+                        <div
+                          onClick={() => navigate(`/user/${att._id}`)}
+                          className='flex mx-1 w-full cursor-pointer items-center justify-center hover:shadow-md h-full rounded-md overflow-hidden'>
+                          <img
+                            className='w-5/12 max-w-xs h-full object-cover rounded-md '
+                            src={att.avatar}
+                            alt={att.fullName}
+                          />
+                          <p className='text-gray-700 px-3 font-semibold text-lg'>
+                            {att.fullName}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
                     {/* Add more list items as needed */}
                   </ul>
                 )}
               </div>
               <div className='flex items-center ml-2'>
-                Participants: {event.memberCount}
+                {t('Participants')}: {event.attendees.length} / {event.maxAttendees}
               </div>
             </div>
           </div>
         </div>
       </div>
       <div className='mt-10'>
-        <h2 className='text-xl font-bold text-center'>Description</h2>
-        <p className='text-start'>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
-          consectetur lorem massa, volutpat ullamcorper dolor accumsan sed.
-          Pellentesque felis risus, dapibus vehicula nibh sed, accumsan blandit
-          nunc. Vivamus vitae malesuada ex, eu congue augue. Quisque non lectus
-          sed nisi iaculis faucibus. Mauris a vehicula dolor, at suscipit justo.
-          Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras
-          pretium convallis nulla nec sollicitudin. Duis laoreet pellentesque
-          dui, vitae sodales justo rhoncus a. Ut nec lacinia augue, feugiat
-          dictum purus. Nunc ac erat nisl. Ut et purus fringilla, tristique
-          sapien quis, varius justo. Maecenas bibendum tempor scelerisque.
-          Mauris at elit id sem commodo elementum eget non ante. Vestibulum
-          volutpat vel ipsum sit amet vehicula. Ut suscipit odio diam, sit amet
-          efficitur enim iaculis ac. Nulla et aliquet ante. Phasellus pulvinar
-          magna eget aliquet convallis. Vivamus eleifend eros ut nunc congue
-          tincidunt. Vestibulum imperdiet bibendum accumsan. Curabitur feugiat
-          leo maximus euismod accumsan. Nunc dictum dictum eros, ut pharetra
-          diam consequat vel. Nulla rutrum ipsum fringilla, imperdiet mauris
-          sed, blandit lacus. Vestibulum ante ipsum primis in faucibus orci
-          luctus et ultrices posuere cubilia curae; Integer accumsan scelerisque
-          semper. Nulla vehicula auctor nisi non laoreet. Fusce iaculis
-          scelerisque posuere. Pellentesque a orci sed neque auctor tincidunt.
-          Aenean diam justo, condimentum id erat a, condimentum ullamcorper
-          nulla. Integer at aliquet arcu, non tristique mi. Maecenas mollis
-          hendrerit lacus quis sollicitudin. Aenean sem sapien, congue a est
-          dapibus, lobortis vulputate mi. In vitae nulla elementum, condimentum
-          lectus pretium, sollicitudin neque. Cras vitae molestie nisl, non
-          pulvinar est. Etiam laoreet felis vel tempus elementum. Vestibulum
-          ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia
-          curae; Suspendisse viverra libero in urna sollicitudin ultrices.
-          Aliquam cursus tellus elit, nec ultrices neque posuere vel. Curabitur
-          vestibulum interdum neque id pharetra. Phasellus gravida, arcu vitae
-          faucibus pharetra, ante nunc rhoncus nibh, pellentesque bibendum
-          ligula lacus nec sem. Nullam et convallis velit. Curabitur eu nibh
-          eget arcu laoreet porta. Mauris viverra id lacus eu aliquet. Morbi a
-          lacinia purus. Sed eget lacus sit amet massa pulvinar iaculis ut eget
-          leo. Nunc tristique, erat ac maximus facilisis, augue leo lobortis
-          felis, in hendrerit orci nibh sit amet dolor. Donec justo dui,
-          pellentesque et ullamcorper at, sollicitudin vel quam. Sed euismod
-          eget dolor ut hendrerit. Maecenas quis dapibus ante, sit amet
-          pellentesque nibh. Duis turpis nisi, interdum a nunc sit amet,
-          accumsan cursus tortor. Mauris eu erat quis tellus bibendum auctor. In
-          nunc felis, aliquet eget elementum non, suscipit vitae libero. Vivamus
-          hendrerit, neque eget cursus vulputate, lectus orci maximus sem, quis
-          tempus turpis lorem in nunc. Nulla feugiat faucibus velit, non varius
-          ligula dictum eget. Integer dignissim, dolor feugiat sagittis commodo,
-          lectus enim accumsan massa, mollis pulvinar orci neque maximus eros.
-          Duis ornare imperdiet posuere. Nullam at tincidunt lacus, sit amet
-          fermentum mauris. Nunc nec turpis ac dui interdum volutpat eget ac
-          nunc. Quisque nisl arcu, vehicula et sollicitudin vitae, tristique sed
-          velit. Integer blandit est vel venenatis aliquet. Donec fringilla
-          tortor ut nisi fringilla, ut efficitur quam euismod. Proin at rhoncus
-          justo. Phasellus eros arcu, auctor et rutrum quis, pulvinar a lacus.
-          Etiam libero dolor, eleifend eget faucibus lobortis, malesuada ut
-          metus. Quisque fringilla ut justo vitae malesuada.
-        </p>
+        <h2 className='text-xl font-bold text-start lg:text-3xl'>
+          {t('Description')}
+        </h2>
+        <p className='text-start mt-1'>{event.description}</p>
+      </div>
+      <div className='mt-10'>
+        <h2 className='text-xl font-bold text-start lg:text-3xl'>{t('Comments')}</h2>
+        <div className='overflow-y-auto max-h-80'>
+          {comments.length ? (
+            comments.map((comment, index) => (
+              <CommentCard key={index} comment={comment} />
+            ))
+          ) : (
+            <div className='flex flex-col w-full lg:mx-5 my-6'>
+              <h1 className='text-2xl my-6'>{t('Oops! Nothing found...')}</h1>
+            </div>
+          )}
+        </div>
+        <div className='w-full border my-5 border-green-500 rounded-md hover:shadow-md hover:shadow-green-400 mb-3 lg:mb-0'>
+          <div className='flex items-center bg-white rounded-md'>
+            <textarea
+              type='text'
+              onChange={(e) => setCommentInp(e.target.value)}
+              value={commentInp}
+              name='comment'
+              className='w-full bg-transparent border-0 p-3 focus:outline-none focus:border-0'
+              placeholder={`${t('Comment')}...`}
+            />
+            <button
+              name='post'
+              className='flex items-center justify-center text-lg h-full p-5 cursor-pointer border-l hover:bg-green-50'
+              onClick={createCommentHandler}>
+              {t('Send')}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className='mt-10'>
+        <h2 className='text-xl font-bold text-start lg:text-3xl'>
+          {t('Similar events')}
+        </h2>
+        <div className='flex flex-col justify-between lg:flex-row w-full lg:mx-5 my-6'>
+          {simEvent.map((ev) => (
+            <div key={ev._id} onClick={() => navigate(`/event/${ev._id}`)}>
+              <EventCard event={ev} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

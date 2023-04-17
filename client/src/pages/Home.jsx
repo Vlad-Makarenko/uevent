@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { HiSearch } from 'react-icons/hi';
 import { Pagination } from 'flowbite-react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { EventCard } from '../components/event/EventCard';
 import { Loader } from '../components/Loader';
 import { Filters } from '../components/event/Filters';
@@ -27,8 +28,10 @@ export const Home = () => {
     totalPages,
     isLoading,
   } = useSelector((state) => state.event);
-  const [localFilter, setLocalFilter] = useState(DEFAULT_FILTERS);
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const [localFilter, setLocalFilter] = useState(DEFAULT_FILTERS);
 
   useEffect(() => {
     dispatch(getAllEvents());
@@ -110,7 +113,11 @@ export const Home = () => {
           {currentPageEvents.length ? (
             <div className='flex flex-col w-full lg:mx-5 my-6'>
               {currentPageEvents.map((event) => (
-                <EventCard key={event._id} event={event} />
+                <div
+                  key={event._id}
+                  onClick={() => navigate(`/event/${event._id}`)}>
+                  <EventCard event={event} />
+                </div>
               ))}
             </div>
           ) : (
@@ -135,11 +142,6 @@ export const Home = () => {
         showIcons={true}
         totalPages={totalPages}
       />
-      {/* <Pagination
-        currentPage={currentPage}
-        onPageChange={handlePageClick}
-        totalPages={totalPages}
-      /> */}
     </div>
   );
 };

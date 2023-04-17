@@ -25,7 +25,7 @@ export const useRoutes = () => {
             <Route path='/calendar' element={<CalendarPage />} exact />
             <Route path='/user/:id' element={<User />} exact />
             <Route path='/companies' element={<Companies />} exact />
-            <Route path='/eventPage' element={<EventPage />} exact />
+            <Route path='/event/:id' element={<EventPage />} exact />
             <Route path='/testMap' element={<TestMapPage />} exact />
             <Route
               path='/password-reset/:token'

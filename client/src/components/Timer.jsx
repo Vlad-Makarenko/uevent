@@ -1,8 +1,10 @@
 /* eslint-disable no-use-before-define */
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Timer = ({ endDate }) => {
   const [timeRemaining, setTimeRemaining] = useState(getTimeRemaining());
+  const { t } = useTranslation();
 
   useEffect(() => {
     const timerInterval = setInterval(() => {
@@ -15,7 +17,7 @@ const Timer = ({ endDate }) => {
   }, []);
 
   function getTimeRemaining() {
-    const total = Date.parse(endDate) - Date.parse(new Date());
+    const total = Date.parse(new Date(endDate)) - Date.parse(new Date());
     const seconds = Math.floor((total / 1000) % 60);
     const minutes = Math.floor((total / 1000 / 60) % 60);
     const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
@@ -30,11 +32,11 @@ const Timer = ({ endDate }) => {
   }
 
   return (
-    <div className='animate-pulse hover:animate-none text-green-400 text-xl'>
-      <span>{timeRemaining.days} дней </span>
-      <span>{timeRemaining.hours} часов </span>
-      <span>{timeRemaining.minutes} минут </span>
-      <span>{timeRemaining.seconds} секунд</span>
+    <div className='animate-pulse hover:animate-none text-green-400 lg:text-xl text-xs'>
+      <span>{timeRemaining.days}{t('d')} </span>
+      <span>{timeRemaining.hours}{t('h')}  </span>
+      <span>{timeRemaining.minutes}{t('m')}  </span>
+      <span>{timeRemaining.seconds}{t('s')} </span>
     </div>
   );
 };

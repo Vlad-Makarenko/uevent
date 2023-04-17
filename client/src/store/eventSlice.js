@@ -48,6 +48,18 @@ export const getAllEvents = createAsyncThunk(
   }
 );
 
+export const getAllComments = createAsyncThunk(
+  'event/getAllComments',
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`${API_URL}/comment/${id}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const getCategories = createAsyncThunk(
   'event/getCategories',
   async (_, { rejectWithValue }) => {
@@ -87,6 +99,20 @@ export const createEvent = createAsyncThunk(
         startEvent,
         endEvent,
         allDay,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const createComment = createAsyncThunk(
+  'event/createComment',
+  async ({ id, body }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`${API_URL}/comment/${id}`, {
+        body,
       });
       return response.data;
     } catch (error) {
@@ -159,14 +185,31 @@ const eventSlice = createSlice({
     events: [],
     filteredEvents: [],
     categories: [],
+    comments: [],
     todayEvents: [],
-    event: {},
+    event: {
+      _id: '6438452c7e6087963869437f',
+      title: 'Перший створений івент',
+      description:
+        'Дуже довгий дескріпшн щоб перевірити як воно відображає його і дізнатись куди краще його вліпити та й в цілому може якось обрізати чи ще щось? Дуже довгий дескріпшн щоб перевірити як воно відображає його і дізнатись куди краще його вліпити та й в цілому може якось обрізати чи ще щось?',
+      banner:
+        'https://ichef.bbci.co.uk/news/999/cpsprodpb/15951/production/_117310488_16.jpg',
+      location: '{}',
+      startEvent: '2023-04-13T15:50:21.000Z',
+      endEvent: '2023-04-14T16:50:21.000Z',
+      allDay: false,
+      isPerformed: false,
+      price: 1231,
+      categories: [],
+      organizer: {},
+      attendees: [],
+      maxAttendees: 44,
+    },
     totalPages: 1,
     currentPage: 1,
     currentPageEvents: [],
-    eventLoading: false,
     isLoading: false,
-    success: false,
+    success: true,
   },
   reducers: {
     setCurrentEvent(state, action) {
@@ -194,10 +237,7 @@ const eventSlice = createSlice({
       );
     },
     resetFilters(state, action) {
-      const filteredEvents = filterEventsUtil(
-        state.events,
-        DEFAULT_FILTERS
-      );
+      const filteredEvents = filterEventsUtil(state.events, DEFAULT_FILTERS);
       state.filteredEvents = filteredEvents;
       state.totalPages = countTotalPages(filteredEvents);
       state.currentPageEvents = getCurrentEvents(filteredEvents, 1);
@@ -205,14 +245,10 @@ const eventSlice = createSlice({
     },
   },
   extraReducers: {
-    [getTodayEvents.pending]: (state) => {
-      state.isLoading = true;
-    },
-    [getCategories.pending]: (state) => {
-      state.isLoading = true;
-    },
+    [getTodayEvents.pending]: (state) => {},
+    [getCategories.pending]: (state) => {},
     [getEvent.pending]: (state) => {
-      state.eventLoading = true;
+      state.isLoading = true;
     },
     [getAllEvents.pending]: (state) => {
       state.isLoading = true;
@@ -224,20 +260,25 @@ const eventSlice = createSlice({
       state.isLoading = true;
       state.success = false;
     },
+    [createComment.pending]: (state) => {
+      state.success = false;
+    },
     [acceptEventInvite.pending]: (state) => {
       state.isLoading = true;
     },
     [getTodayEvents.fulfilled]: (state, action) => {
       state.todayEvents = action.payload;
-      state.isLoading = false;
+    },
+    [getAllComments.fulfilled]: (state, action) => {
+      state.comments = action.payload;
     },
     [getEvent.fulfilled]: (state, action) => {
       state.event = action.payload;
-      state.eventLoading = false;
+      console.log(state.event);
+      state.isLoading = false;
     },
     [getCategories.fulfilled]: (state, action) => {
       state.categories = action.payload;
-      state.isLoading = false;
     },
     [getAllEvents.fulfilled]: (state, action) => {
       state.events = action.payload;
@@ -259,6 +300,10 @@ const eventSlice = createSlice({
       state.isLoading = false;
       state.success = true;
     },
+    [createComment.fulfilled]: (state, action) => {
+      toast.success('Comment has been successfully added!');
+      state.comments = [...state.comments, action.payload];
+    },
     [acceptEventInvite.fulfilled]: (state) => {
       toast.success('Invite has been successfully accepted!');
       state.isLoading = false;
@@ -277,11 +322,13 @@ const eventSlice = createSlice({
     },
     [getTodayEvents.rejected]: errorHandler,
     [getEvent.rejected]: (state, action) => {
-      state.eventLoading = false;
+      state.isLoading = false;
       toast.error(action.payload.message);
       console.log('Request error: ', action.payload);
     },
     [acceptEventInvite.rejected]: errorHandler,
+    [createComment.rejected]: errorHandler,
+    [getAllComments.rejected]: errorHandler,
     [getCategories.rejected]: errorHandler,
     [getAllEvents.rejected]: errorHandler,
     [getMyEvents.rejected]: errorHandler,
