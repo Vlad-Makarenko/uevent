@@ -48,7 +48,7 @@ const PaymentModal = () => {
           subscribeEvent({
             id: currEvent._id,
             paymentIntentId: result.paymentIntent.id,
-            price: currEvent.price,
+            price: promo === 'sale123' || promo === 'promo' || promo === '123' || promo === 'sale' ? currEvent.price - (currEvent.price * 0.05) : currEvent.price,
             title: currEvent.title,
             startEvent: formatDate(currEvent.startEvent),
             endEvent: formatDate(currEvent.endEvent),

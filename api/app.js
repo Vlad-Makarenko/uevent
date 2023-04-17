@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 const start = async () => {
   try {
     await InitDB();
-    // populateCategories();
+    populateCategories();
     app.listen(PORT, () => {
       console.log(`server is running on http://${HOST}:${PORT}`);
     });

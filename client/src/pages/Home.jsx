@@ -13,10 +13,8 @@ import {
   filterEvents,
   getAllEvents,
   getCategories,
-  getTodayEvents,
 } from '../store/eventSlice';
 import { DEFAULT_FILTERS, SORT_RADIOS } from '../utils/filters.utils';
-// import { Pagination } from '../components/Pagination';
 
 export const Home = () => {
   const dispatch = useDispatch();
