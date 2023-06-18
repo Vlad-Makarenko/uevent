@@ -57,7 +57,7 @@ export const NavBar = () => {
         <span onClick={() => navigate('/')} className='self-center whitespace-nowrap text-xl font-semibold dark:text-white cursor-pointer'>
           Eventify
         </span>
-        <div className='mx-4 flex items-center'>
+        <div className='lg:mx-4 mx-2 flex items-center'>
           {i18n.language === 'uk' ? (
             <button onClick={() => changeLanguage('en')}>
               <img src={enFlag} alt='English' width='35' />
@@ -109,7 +109,7 @@ export const NavBar = () => {
           </Dropdown>
         ) : (
           <button
-            className='p-1 px-3 bg-green-600 rounded-md border-2 border-green-500 text-white hover:bg-green-500 animate-pulse hover:animate-none'
+            className='p-1 lg:px-3 bg-green-600 rounded-md border-2 border-green-500 text-white hover:bg-green-500 animate-pulse hover:animate-none'
             onClick={() => navigate('/auth')}>
             {t('Get Started!')}
           </button>
