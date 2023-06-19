@@ -10,6 +10,7 @@
 		"ecmaVersion": 12
 	},
 	"rules": {
+		"comma-dangle": ["error", "only-multiline" ],
 		"no-unused-vars": 1,
 		"no-multi-assign": 0,
 		"no-return-await": 0,
