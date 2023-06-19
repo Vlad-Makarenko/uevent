@@ -9,7 +9,6 @@ import { CalendarPage } from '../pages/CalendarPage';
 import { EventPage } from '../pages/EventPage';
 import { Companies } from '../pages/Companies';
 import { Auth } from '../pages/Auth';
-import { TestMapPage } from '../pages/testMapPage';
 import { CheckLogin } from '../components/CheckLogin';
 import { User } from '../pages/User';
 import { CreateEvent } from '../pages/CreateEvent';
@@ -34,7 +33,6 @@ export const useRoutes = () => {
             <Route path='/companies/create' element={<CreateCompany />} exact />
             <Route path='/companies/:id' element={<CompanyPage />} exact />
             <Route path='/event/:id' element={<EventPage />} exact />
-            <Route path='/testMap' element={<TestMapPage />} exact />
             <Route
               path='/password-reset/:token'
               element={<ResetPassword />}

@@ -11,7 +11,7 @@
 ### [🌐 Website](https://eventify-uevent.netlify.app/)  |  [📹 Demo Video](https://www.youtube.com/watch?v=sXvoPSu9GaA)
 
 ### API Hosted On
-- __[eventify-kiqp.onrender](https://eventify-kiqp.onrender.com/) (Primary)__
+- __[eventify-uusl.onrender](https://eventify-uusl.onrender.com/) (Primary)__
 
 This is a web application for buying tickets and finding companies for events.
 
