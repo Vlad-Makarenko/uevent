@@ -1,6 +1,4 @@
 import React from 'react';
-import { Tooltip } from 'flowbite-react';
-import { useNavigate } from 'react-router-dom';
 import { BiLink } from 'react-icons/bi';
 import { formatDate } from '../../utils/date.utils';
 

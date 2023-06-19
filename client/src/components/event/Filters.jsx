@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import moment from 'moment';
-import { Tooltip } from 'flowbite-react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
 import { resetFilters } from '../../store/eventSlice';
 import {
-  prepareCategories,
-  TIME_RADIOS,
-  filterByTime,
   DEFAULT_FILTERS,
+  TIME_RADIOS,
+  prepareCategories
 } from '../../utils/filters.utils';
 
 export const Filters = ({ localFilter, changeHandler, setLocalFilter }) => {

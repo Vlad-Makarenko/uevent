@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { Avatar } from 'flowbite-react';
+import React, { useEffect, useState } from 'react';
 import { BsFillPersonFill, BsImage } from 'react-icons/bs';
 import { HiAtSymbol } from 'react-icons/hi';
-import { MdLabel } from 'react-icons/md';
-import { Avatar } from 'flowbite-react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { editProfile } from '../../store/authSlice';
 import { useMessage } from '../../hooks/message.hook';
+import { editProfile } from '../../store/authSlice';
 
 export const ProfileSettings = () => {
   const message = useMessage();

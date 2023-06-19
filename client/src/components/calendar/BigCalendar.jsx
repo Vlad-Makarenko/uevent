@@ -1,22 +1,21 @@
+import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 
 import invert from 'invert-color';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useMessage } from '../../hooks/message.hook';
 import {
   eventDateUpdate,
   eventsToCalendar,
   getEditEventDate,
 } from '../../utils/event.utils';
-import { useMessage } from '../../hooks/message.hook';
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { getEvent, updateEvent } from '../../store/eventSlice';
-import { infoEventOn } from '../../store/modalSlice';
+import { updateEvent } from '../../store/eventSlice';
 
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);

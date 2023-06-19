@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import api from '../http';
@@ -119,7 +119,7 @@ const companySlice = createSlice({
       state.company = action.payload;
       state.isLoading = false;
     },
-    [createCompany.fulfilled]: (state, action) => {
+    [createCompany.fulfilled]: (state) => {
       toast.success('Company has been successfully created!');
       // state.companies = [...state.Companies, action.payload];
       state.isLoading = false;
