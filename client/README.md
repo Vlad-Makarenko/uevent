@@ -8,6 +8,7 @@
     <li>Redux</li>
     <li>Tailwindcss</li>
     <li>Axios</li>
+    <li>i18next</li>
 </ul>
 <h2>Setup</h2>
 
@@ -24,11 +25,65 @@ To Start App:
 
 To Visit App:
 
-`http://localhost:5000/`
+`http://localhost:3000/`
 
 </p>
 
 ## DEMO
+
+
+#### VIDEO - [Watch the video](https://www.youtube.com/watch?v=sXvoPSu9GaA)
+
+
+#### Events page
+
+<img src="../assets/eventsPage.png" />
+
+#### Event page
+
+<img src="../assets/eventPage.png" />
+
+#### payment
+
+<img src="../assets/payment.png" />
+
+#### Companies page
+
+<img src="../assets/companiesPage.png" />
+
+#### Company page
+
+<img src="../assets/companyPage.png" />
+
+#### Sign in / Sign up forms
+
+<img src="../assets/signIn.png" />
+<img src="../assets/signUp.png" />
+
+#### Create event
+
+<img src="../assets/createEvent1.png" />
+<img src="../assets/createEvent2.png" />
+
+#### Create company
+
+<img src="../assets/createCompany.png" />
+
+#### User page
+
+<img src="../assets/profilePage.png" />
+
+#### Settings
+
+<img src="../assets/settings.png" />
+
+#### Ukraine localization
+
+<img src="../assets/ukLoacale.png" />
+
+#### Dark mode
+
+<img src="../assets/darkMode.png" />
 
 <h3>Soon...</h3>
 

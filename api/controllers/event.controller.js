@@ -3,8 +3,7 @@ const { validationResult } = require('express-validator');
 
 const PDFDocument = require('pdfkit');
 const QRCode = require('qrcode');
-const fs = require('fs'); // Импортируем модуль fs
-const uuid = require('uuid');
+const fs = require('fs');
 const eventService = require('../services/event.service');
 const mailService = require('../services/mail.service');
 const ApiError = require('../utils/ApiError');
@@ -117,16 +116,14 @@ const subscribeEvent = async (req, res, next) => {
         price,
         title,
         startEvent,
-        endEvent /* Дополнительные данные о платеже и пользователе */,
+        endEvent
       } = req.body;
       const { email, fullName } = req.user;
 
-      // Генерируем PDF-билет
       const doc = new PDFDocument({ font: `./public/fonts/Anonymous_Pro.ttf` });
       doc.pipe(fs.createWriteStream(`./public/${paymentIntentId}.pdf`));
 
-      // Добавляем QR-код на PDF-документ
-      const qrCodeData = `${process.env.CLIENT_URL}/event/${eventId}`; // Здесь может быть ваша ссылка на страницу с билетом
+      const qrCodeData = `${process.env.CLIENT_URL}/event/${eventId}`;
       const qrCodeOptions = {
         margin: 1,
         scale: 8,
@@ -139,30 +136,28 @@ const subscribeEvent = async (req, res, next) => {
       );
       doc.image(qrCodeImageBuffer, 50, 70, { width: 100, height: 100 });
 
-      // Добавляем данные о билете справа от QR-кода
       doc
         .fontSize(16)
         .font(`./public/fonts/Anonymous_Pro_B.ttf`)
-        .text(`${title}`, 180, 50) // Название ивента и цена
+        .text(`${title}`, 180, 50)
         .moveDown()
         .fontSize(14)
         .text(`price:${price}$`)
         .moveDown()
-        .text(`user:  ${fullName}`) // Имя пользователя и дата
+        .text(`user:  ${fullName}`)
         .moveDown()
         .text(`${startEvent}  -  ${endEvent}`)
         .moveDown()
-        .text(`Payment ID: ${paymentIntentId}`); // Payment Intent ID
+        .text(`Payment ID: ${paymentIntentId}`);
 
-      // Добавляем пунктирную линию (или иконку ножниц) под данными о билете
       doc
         .moveTo(0, 200)
         .lineTo(650, 200)
-        .dash(5, { space: 2 }) // Устанавливаем пунктирный стиль линии
+        .dash(5, { space: 2 })
         .stroke()
-        .undash(); // Отключаем пунктирный стиль линии
+        .undash();
 
-      doc.end(); // Завершаем создание PDF-документа
+      doc.end();
 
       mailService.sendTicket(email, paymentIntentId, title, eventId);
     }

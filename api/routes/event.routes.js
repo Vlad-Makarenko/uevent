@@ -3,13 +3,12 @@ const { Router } = require('express');
 const { body } = require('express-validator');
 const stripe = require('stripe')(
   'sk_test_51MxaykJI6b434rARb659osLUrq0oQskcFEAoW79Hl41UBjGIWNiNfPUYnMJzGtqrsWB1zUOdrPyNHcAUtADQCHPW00wmLFOHXV'
-); // Замените 'YOUR_SECRET_API_KEY' на ваш секретный ключ Stripe API
+);
 const eventController = require('../controllers/event.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 
 const router = new Router();
 
-// Маршрут для создания платежа
 router.post('/create-payment-intent', async (req, res) => {
   try {
     const { amount, currency } = req.body;
@@ -17,7 +16,6 @@ router.post('/create-payment-intent', async (req, res) => {
       amount,
       currency,
     });
-    // Отправляем клиентский секрет обратно на клиентскую сторону
     res.status(200).json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     console.error('Ошибка при создании платежного интента:', error);
